@@ -3,8 +3,9 @@ import "./globals.css";
 import Providers from "@/providers/providers";
 
 export const metadata: Metadata = {
-  title: "Puddle",
-  description: "Puddle",
+  title: "Onchain Piggy Bank - Save Together",
+  description:
+    "Create shared piggy banks with friends and family using Ethereum smart contracts",
 };
 
 export default function RootLayout({

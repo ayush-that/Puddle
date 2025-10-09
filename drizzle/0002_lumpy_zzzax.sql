@@ -1,0 +1,2 @@
+ALTER TABLE "piggy_bank_members" DROP CONSTRAINT "piggy_bank_members_unique_member";--> statement-breakpoint
+CREATE UNIQUE INDEX "piggy_bank_member_unique" ON "piggy_bank_members" USING btree ("piggy_bank_id","user_id");

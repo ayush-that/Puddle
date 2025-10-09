@@ -1,0 +1,1 @@
+ALTER TABLE "piggy_bank_members" ADD CONSTRAINT "piggy_bank_members_unique_member" UNIQUE("piggy_bank_id","user_id");
