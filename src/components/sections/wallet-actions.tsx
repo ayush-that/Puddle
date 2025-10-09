@@ -370,7 +370,10 @@ const WalletActions = () => {
               <>
                 <option value="">Select a wallet</option>
                 {allWallets.map((wallet) => (
-                  <option key={wallet.address} value={wallet.address}>
+                  <option
+                    key={`${wallet.type}-${wallet.address}`}
+                    value={wallet.address}
+                  >
                     {wallet.address} [
                     {wallet.type === "ethereum" ? "ethereum" : "solana"}]
                   </option>

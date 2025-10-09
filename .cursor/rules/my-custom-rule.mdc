@@ -1,0 +1,616 @@
+---
+alwaysApply: true
+---
+
+# Cursor Rules - Onchain Piggy Bank Platform
+
+## Project Overview
+
+This is a **mobile-only** web application for creating shared onchain piggy banks where friends/couples can save money together. The platform uses Ethereum smart contracts with multi-signature withdrawals, Privy embedded wallets, and Push Protocol for notifications and chat.
+
+**CRITICAL: This is a mobile-first, mobile-only application. All UI components must be designed and optimized exclusively for mobile devices (320px - 428px width).**
+
+## Tech Stack
+
+### Frontend
+
+- **Next.js 15** (App Router)
+- **React 19**
+- **TypeScript** (strict mode)
+- **Tailwind CSS** (mobile-first utility classes)
+- **Privy** (@privy-io/react-auth) for embedded wallets
+- **viem** for Ethereum interactions
+
+### Backend
+
+- **Next.js API Routes** (App Router)
+- **PostgreSQL** database
+- **Drizzle ORM** for type-safe queries
+
+### Blockchain
+
+- **Solidity** smart contracts
+- **Foundry** for contract development and testing
+- **Ethereum Sepolia** testnet (development)
+- **Ethereum Mainnet** (production)
+
+### Communication
+
+- **Push Protocol** for web3 notifications and chat
+- **@pushprotocol/restapi** for backend
+- **@pushprotocol/uiweb** for frontend components
+
+## Code Style & Conventions
+
+### General
+
+- Use **double quotes** for strings
+- Use **2 spaces** for indentation
+- Use **semicolons** at end of statements
+- Prefer **const** over let, avoid var
+- Use **arrow functions** for callbacks
+- Use **async/await** over promises chains
+
+### TypeScript
+
+- Enable strict mode
+- Explicitly type function parameters and return values
+- Use interfaces for object shapes
+- Use type aliases for unions and primitives
+- Avoid `any` - use `unknown` if type is truly unknown
+
+### React/Next.js
+
+- Use **"use client"** directive for client components
+- Prefer **server components** when possible
+- Use **named exports** for components
+- Keep components **small and focused** (< 200 lines)
+- Extract reusable logic into custom hooks
+- Use **React 19 features** (use hook, optimistic updates)
+
+### Mobile-First UI Requirements
+
+**ALL UI COMPONENTS MUST:**
+
+- Be designed for mobile screens only (320px - 428px width)
+- Use touch-friendly targets (minimum 44x44px)
+- Support portrait orientation only
+- Use mobile-appropriate font sizes (minimum 16px for body text)
+- Include proper touch gestures (swipe, tap, long-press)
+- Optimize for one-handed use when possible
+- Support safe areas for notched devices
+
+**Tailwind Classes for Mobile:**
+
+```typescript
+// ✅ Good - Mobile-first
+<button className="w-full py-4 text-lg">
+
+// ❌ Bad - Desktop sizing
+<button className="w-64 py-2 text-sm">
+```
+
+**Testing on Mobile:**
+
+- Test on actual devices: iPhone SE (smallest), iPhone 14 Pro Max (largest)
+- Use Chrome DevTools mobile emulation
+- Test touch interactions, not mouse clicks
+- Verify scrolling and swipe gestures work smoothly
+
+### File Organization
+
+```
+src/
+├── app/                    # Next.js pages (mobile UI only)
+├── components/
+│   ├── piggy-bank/        # Feature components
+│   ├── push/              # Push Protocol components
+│   ├── ui/                # Reusable UI components (mobile-optimized)
+│   └── reusables/         # Generic components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utilities and helpers
+├── services/              # Backend services
+├── db/                    # Database schema and queries
+└── contracts/             # Contract ABIs and configs
+```
+
+### Naming Conventions
+
+- **Files**: kebab-case (`piggy-bank-card.tsx`)
+- **Components**: PascalCase (`PiggyBankCard`)
+- **Functions**: camelCase (`getUserPiggyBanks`)
+- **Constants**: UPPER_SNAKE_CASE (`SEPOLIA_CHAIN_ID`)
+- **Types/Interfaces**: PascalCase (`User`, `PiggyBank`)
+- **Hooks**: camelCase with "use" prefix (`usePiggyBank`)
+
+## Smart Contract Guidelines
+
+### Solidity Best Practices
+
+- Use Solidity **^0.8.24**
+- Use **custom errors** instead of require strings
+- Follow **checks-effects-interactions** pattern
+- Mark variables as **immutable** when set in constructor
+- Emit **events** for all state changes
+- Add **NatSpec comments** for all public functions
+
+### Gas Optimization
+
+- Pack struct variables efficiently
+- Use immutable for constructor-set values
+- Avoid unbounded loops
+- Use `calldata` for external function parameters
+- Cache array lengths in loops
+
+### Security
+
+- Implement reentrancy guards where needed
+- Validate all inputs
+- Use SafeMath operations (built-in ^0.8.0)
+- Avoid tx.origin, use msg.sender
+- Test all edge cases
+
+## Database Patterns (Drizzle ORM)
+
+### Schema Definition
+
+```typescript
+// Use proper types and constraints
+export const users = pgTable("users", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  walletAddress: text("wallet_address").unique().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+```
+
+### Queries
+
+- Use **prepared statements** via Drizzle
+- Always handle null/undefined cases
+- Use transactions for multi-step operations
+- Add proper indexes for frequently queried fields
+- Use relations for joins
+
+## API Route Patterns
+
+### Structure
+
+```typescript
+// Always validate authentication
+const authUser = await getAuthUser(request);
+if (!authUser) {
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+}
+
+// Validate input
+if (!requiredField) {
+  return NextResponse.json(
+    { error: "Missing required field" },
+    { status: 400 },
+  );
+}
+
+// Handle errors
+try {
+  // Logic here
+} catch (error) {
+  console.error("Operation failed:", error);
+  return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+}
+```
+
+### Authentication
+
+- Verify Privy JWT tokens
+- Check user permissions
+- Return proper HTTP status codes
+- Never expose sensitive data
+
+## Component Patterns
+
+### Mobile-First Component Template
+
+```typescript
+"use client";
+
+import { useState } from "react";
+
+interface MobileComponentProps {
+  title: string;
+  onAction: () => void;
+}
+
+export function MobileComponent({ title, onAction }: MobileComponentProps) {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4">
+      {/* Mobile-optimized header */}
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold">{title}</h1>
+      </header>
+
+      {/* Touch-friendly button */}
+      <button
+        onClick={onAction}
+        disabled={loading}
+        className="w-full py-4 bg-blue-500 text-white rounded-lg text-lg font-medium active:scale-95 transition-transform disabled:opacity-50"
+      >
+        {loading ? "Loading..." : "Tap to Continue"}
+      </button>
+    </div>
+  );
+}
+```
+
+### Loading States
+
+- Show **skeleton screens** for better UX
+- Use **optimistic updates** where appropriate
+- Display **progress indicators** for long operations
+- Disable buttons during actions
+
+### Error Handling
+
+- Show user-friendly error messages
+- Provide actionable error recovery
+- Log errors to console for debugging
+- Never expose technical details to users
+
+## Push Protocol Integration
+
+### Notifications
+
+- Subscribe users to channel on first visit
+- Send notifications for: deposits, withdrawals, goal milestones
+- Format notifications consistently
+- Include deep links to relevant pages
+
+### Chat
+
+- Initialize chat when piggy bank is created
+- Poll for new messages every 5 seconds
+- Show unread indicators
+- Support mobile-friendly chat UI (bottom input, scrollable messages)
+
+## Blockchain Interaction
+
+### Using viem
+
+```typescript
+// Always handle errors
+try {
+  const { request } = await publicClient.simulateContract({
+    address: contractAddress,
+    abi: contracts.piggyBank.abi,
+    functionName: "deposit",
+    value: parseEther(amount),
+    account: walletClient.account,
+  });
+
+  const hash = await walletClient.writeContract(request);
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+  return receipt;
+} catch (error) {
+  console.error("Transaction failed:", error);
+  throw error;
+}
+```
+
+### Transaction Handling
+
+- Simulate before executing
+- Wait for confirmations
+- Show pending states to users
+- Handle rejected transactions
+- Update database after confirmation
+
+## Mobile UI/UX Best Practices
+
+### Layout
+
+- Full-width containers on mobile
+- Generous padding (p-4 minimum)
+- Safe area insets for notched devices
+- Sticky headers/navigation at top
+- Bottom sheet modals instead of centered modals
+
+### Typography
+
+- Minimum 16px for body text (prevents zoom on iOS)
+- 24px+ for headings
+- Line height 1.5 for readability
+- Limit line length for comfort
+
+### Touch Targets
+
+- Minimum 44x44px (iOS HIG standard)
+- 48x48px preferred (Android Material Design)
+- Add padding around small icons
+- Space buttons apart (minimum 8px gap)
+
+### Forms
+
+- Large input fields (min-h-12)
+- Clear labels above inputs
+- Show keyboard-appropriate input types
+- Auto-focus first input on mount
+- Validate on blur, not on every keystroke
+
+### Navigation
+
+- Use bottom tab bar for primary navigation
+- Sticky back button at top left
+- Breadcrumbs not necessary on mobile
+- Use page transitions for hierarchy
+
+### Performance
+
+- Lazy load images
+- Virtual scroll for long lists
+- Debounce search inputs
+- Minimize re-renders
+- Use React.memo for expensive components
+
+## Testing Strategy
+
+### Smart Contracts (Foundry)
+
+```bash
+# Write comprehensive tests
+forge test -vvv
+
+# Check gas usage
+forge test --gas-report
+
+# Test coverage
+forge coverage
+```
+
+### Frontend
+
+- Test on real devices (iPhone, Android)
+- Test touch interactions
+- Test in portrait mode only
+- Test on slow networks (throttle in DevTools)
+- Test with different font sizes (accessibility)
+
+### API
+
+- Validate all inputs
+- Test authentication flows
+- Test error cases
+- Test database transactions
+
+## Environment Variables
+
+```bash
+# Privy
+NEXT_PUBLIC_PRIVY_APP_ID=
+NEXT_PUBLIC_PRIVY_CLIENT_ID=
+
+# Database
+DATABASE_URL=
+
+# Ethereum
+NEXT_PUBLIC_ETHEREUM_RPC_URL=
+NEXT_PUBLIC_FACTORY_ADDRESS=
+
+# Push Protocol
+NEXT_PUBLIC_PUSH_CHANNEL_ADDRESS=
+PUSH_CHANNEL_PRIVATE_KEY=
+NEXT_PUBLIC_PUSH_ENV=
+
+# App
+NEXT_PUBLIC_APP_URL=
+```
+
+## Common Patterns
+
+### Fetching Data
+
+```typescript
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePrivy } from "@privy-io/react-auth";
+
+export function DataComponent() {
+  const { user, getAccessToken } = usePrivy();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchData = async () => {
+      try {
+        const token = await getAccessToken();
+        const response = await fetch("/api/data", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const json = await response.json();
+        setData(json);
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user, getAccessToken]);
+
+  if (loading) return <MobileLoadingSpinner />;
+  if (!data) return <MobileEmptyState />;
+
+  return <MobileDataDisplay data={data} />;
+}
+```
+
+### Form Submission
+
+```typescript
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    await submitForm(formData);
+    toast.success("Success!");
+    router.push("/dashboard");
+  } catch (error) {
+    toast.error("Failed to submit");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+## Performance Checklist
+
+- [ ] Images optimized and lazy loaded
+- [ ] Bundle size < 200KB (gzipped)
+- [ ] First Contentful Paint < 1.5s
+- [ ] Time to Interactive < 3s
+- [ ] No layout shifts (CLS < 0.1)
+- [ ] Touch response < 100ms
+- [ ] Smooth 60fps scrolling
+
+## Accessibility (Mobile Focus)
+
+- [ ] Touch targets minimum 44x44px
+- [ ] Proper heading hierarchy (h1 → h2 → h3)
+- [ ] Alt text for images
+- [ ] ARIA labels for icons
+- [ ] Sufficient color contrast (4.5:1 minimum)
+- [ ] Support for text scaling (up to 200%)
+- [ ] Keyboard navigation (for external keyboards)
+- [ ] Screen reader friendly
+
+## Security Checklist
+
+- [ ] Verify Privy JWT on backend
+- [ ] Never expose private keys
+- [ ] Validate all user inputs
+- [ ] Use parameterized queries (Drizzle)
+- [ ] HTTPS only in production
+- [ ] Set proper CORS headers
+- [ ] Rate limit API endpoints
+- [ ] Smart contracts audited
+
+## Development Workflow
+
+1. **Create feature branch** from main
+2. **Write tests** (contracts first, then frontend)
+3. **Implement feature** following these rules
+4. **Test on mobile device** (real or emulator)
+5. **Format code** (`pnpm format`)
+6. **Commit with descriptive message**
+7. **Create pull request** with screenshots
+8. **Deploy to preview** on Vercel
+9. **Test preview on mobile**
+10. **Merge after approval**
+
+## Common Commands
+
+```bash
+# Development
+pnpm dev              # Start Next.js dev server
+pnpm build            # Build for production
+pnpm format           # Format code with Prettier
+
+# Database
+pnpm db:push          # Push schema changes
+pnpm db:studio        # Open Drizzle Studio
+
+# Smart Contracts
+forge test            # Run contract tests
+forge build           # Compile contracts
+forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC_URL --broadcast
+
+# Deployment
+vercel --prod         # Deploy to production
+```
+
+## Mobile-Specific Gotchas
+
+### iOS Safari
+
+- Input fields cause zoom if < 16px font size
+- Fixed positioning can be buggy
+- Viewport height (100vh) includes address bar
+- Use `viewport-fit=cover` for safe areas
+
+### Android Chrome
+
+- Address bar slides in/out affecting height
+- Different touch event behavior
+- Hardware back button considerations
+
+### Solutions
+
+```css
+/* Use dvh instead of vh for better mobile support */
+.min-h-screen {
+  min-height: 100dvh; /* Dynamic viewport height */
+}
+
+/* Prevent zoom on input focus */
+input {
+  font-size: 16px;
+}
+
+/* Safe area insets for notched devices */
+.safe-top {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+```
+
+## Helpful Tailwind Mobile Utilities
+
+```typescript
+// Full width, touch-friendly buttons
+className = "w-full py-4 text-lg";
+
+// Mobile-optimized cards
+className = "rounded-lg p-4 shadow-md";
+
+// Bottom navigation
+className = "fixed bottom-0 left-0 right-0 bg-white border-t";
+
+// Sticky header with safe area
+className = "sticky top-0 bg-white pt-safe";
+
+// Touch-friendly list items
+className = "py-3 active:bg-gray-100";
+
+// Mobile modal (bottom sheet)
+className = "fixed inset-x-0 bottom-0 rounded-t-2xl bg-white p-4";
+```
+
+## Resources
+
+- [Privy Docs](https://docs.privy.io)
+- [Push Protocol Docs](https://docs.push.org)
+- [Viem Documentation](https://viem.sh)
+- [Foundry Book](https://book.getfoundry.sh)
+- [Drizzle ORM Docs](https://orm.drizzle.team)
+- [Next.js Mobile Best Practices](https://nextjs.org/docs)
+- [iOS HIG](https://developer.apple.com/design/human-interface-guidelines/)
+- [Material Design](https://m3.material.io)
+
+## Remember
+
+1. **Mobile-only**: Every component must work perfectly on mobile screens
+2. **Touch-first**: Design for fingers, not mouse cursors
+3. **Performance**: Mobile users often have slower connections
+4. **Testing**: Always test on real devices before deploying
+5. **Accessibility**: Make it usable for everyone
+6. **Security**: Never compromise on wallet and fund safety
+
+---
+
+When in doubt, prioritize user experience on mobile devices. Keep it simple, fast, and intuitive.

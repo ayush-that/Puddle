@@ -34,9 +34,9 @@ const Section = ({
       {children && <div className="my-4">{children}</div>}
 
       <div className="flex flex-row flex-wrap gap-2 my-4">
-        {actions.map((action, index) => (
+        {actions.map((action) => (
           <button
-            key={index}
+            key={action.name}
             onClick={action.function}
             disabled={action.disabled}
             className={`button ${
