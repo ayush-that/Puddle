@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PiggyBankCard } from "@/components/piggy-bank/piggy-bank-card";
 import { PiggyBank } from "@/db/schema";
 import { DashboardStats } from "@/components/piggy-bank/dashboard-stats";
@@ -15,7 +21,14 @@ import { QuickActions } from "@/components/piggy-bank/quick-actions";
 import { SkeletonCard, SkeletonStats } from "@/components/ui/skeleton-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import { PiggyBank as PiggyBankIcon, Plus, Bell, Search, Filter, X } from "lucide-react";
+import {
+  PiggyBank as PiggyBankIcon,
+  Plus,
+  Bell,
+  Search,
+  Filter,
+  X,
+} from "lucide-react";
 
 interface PiggyBankWithMembership {
   piggyBank: PiggyBank;
@@ -60,9 +73,9 @@ export default function Dashboard() {
               status: "active",
               goalDeadline: new Date("2025-12-31T23:59:59Z"),
               contractAddress: "0x1234567890abcdef1234567890abcdef12345678",
-              createdAt: new Date("2025-01-15T10:30:00Z")
+              createdAt: new Date("2025-01-15T10:30:00Z"),
             },
-            membership: { role: "creator" }
+            membership: { role: "creator" },
           },
           {
             piggyBank: {
@@ -73,9 +86,9 @@ export default function Dashboard() {
               status: "active",
               goalDeadline: new Date("2025-06-30T23:59:59Z"),
               contractAddress: "0x2345678901bcdef1234567890abcdef123456789",
-              createdAt: new Date("2025-01-10T14:20:00Z")
+              createdAt: new Date("2025-01-10T14:20:00Z"),
             },
-            membership: { role: "partner" }
+            membership: { role: "partner" },
           },
           {
             piggyBank: {
@@ -86,9 +99,9 @@ export default function Dashboard() {
               status: "completed",
               goalDeadline: new Date("2025-03-15T23:59:59Z"),
               contractAddress: "0x3456789012cdef1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-05T09:15:00Z")
+              createdAt: new Date("2025-01-05T09:15:00Z"),
             },
-            membership: { role: "creator" }
+            membership: { role: "creator" },
           },
           {
             piggyBank: {
@@ -99,9 +112,9 @@ export default function Dashboard() {
               status: "active",
               goalDeadline: new Date("2025-08-20T23:59:59Z"),
               contractAddress: "0x4567890123def1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-20T16:45:00Z")
+              createdAt: new Date("2025-01-20T16:45:00Z"),
             },
-            membership: { role: "partner" }
+            membership: { role: "partner" },
           },
           {
             piggyBank: {
@@ -112,9 +125,9 @@ export default function Dashboard() {
               status: "active",
               goalDeadline: new Date("2025-11-30T23:59:59Z"),
               contractAddress: "0x5678901234ef1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-25T11:30:00Z")
+              createdAt: new Date("2025-01-25T11:30:00Z"),
             },
-            membership: { role: "creator" }
+            membership: { role: "creator" },
           },
           {
             piggyBank: {
@@ -125,10 +138,10 @@ export default function Dashboard() {
               status: "cancelled",
               goalDeadline: new Date("2025-04-10T23:59:59Z"),
               contractAddress: "0x6789012345f1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-12T13:20:00Z")
+              createdAt: new Date("2025-01-12T13:20:00Z"),
             },
-            membership: { role: "partner" }
-          }
+            membership: { role: "partner" },
+          },
         ];
         setPiggyBanks(mockPiggyBanks);
       } catch (error) {
@@ -147,14 +160,14 @@ export default function Dashboard() {
 
     // Filter by search query
     if (searchQuery.trim()) {
-      filtered = filtered.filter(pb =>
-        pb.piggyBank.name.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter((pb) =>
+        pb.piggyBank.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
     // Filter by status
     if (statusFilter !== "all") {
-      filtered = filtered.filter(pb => pb.piggyBank.status === statusFilter);
+      filtered = filtered.filter((pb) => pb.piggyBank.status === statusFilter);
     }
 
     // Sort
@@ -163,13 +176,25 @@ export default function Dashboard() {
         case "name":
           return a.piggyBank.name.localeCompare(b.piggyBank.name);
         case "amount":
-          return parseFloat(b.piggyBank.currentAmount) - parseFloat(a.piggyBank.currentAmount);
+          return (
+            parseFloat(b.piggyBank.currentAmount) -
+            parseFloat(a.piggyBank.currentAmount)
+          );
         case "progress":
-          const progressA = (parseFloat(a.piggyBank.currentAmount) / parseFloat(a.piggyBank.goalAmount)) * 100;
-          const progressB = (parseFloat(b.piggyBank.currentAmount) / parseFloat(b.piggyBank.goalAmount)) * 100;
+          const progressA =
+            (parseFloat(a.piggyBank.currentAmount) /
+              parseFloat(a.piggyBank.goalAmount)) *
+            100;
+          const progressB =
+            (parseFloat(b.piggyBank.currentAmount) /
+              parseFloat(b.piggyBank.goalAmount)) *
+            100;
           return progressB - progressA;
         case "date":
-          return new Date(b.piggyBank.createdAt).getTime() - new Date(a.piggyBank.createdAt).getTime();
+          return (
+            new Date(b.piggyBank.createdAt).getTime() -
+            new Date(a.piggyBank.createdAt).getTime()
+          );
         default:
           return 0;
       }
@@ -197,16 +222,13 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <PiggyBankIcon className="h-8 w-8 text-foreground" />
-              <h1 className="text-2xl font-bold text-foreground">
-                My Piggy Banks
+              <h1 className="text-xl font-bold text-foreground">
+                Onchain Piggy Bank
               </h1>
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button variant="outline" size="sm">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-              </Button>
+            
               <Button
                 onClick={() => router.push("/piggy-bank/create")}
                 variant="default"
@@ -222,7 +244,11 @@ export default function Dashboard() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Section */}
-        {loading ? <SkeletonStats /> : <DashboardStats piggyBanks={piggyBanks} />}
+        {loading ? (
+          <SkeletonStats />
+        ) : (
+          <DashboardStats piggyBanks={piggyBanks} />
+        )}
 
         {/* Search and Filter Controls */}
         <div className="mb-6 space-y-4">
@@ -297,22 +323,25 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <CardTitle className="text-xl font-semibold text-foreground">
-                      {piggyBanks.length === 0 ? "No Piggy Banks Yet" : "No Results Found"}
+                      {piggyBanks.length === 0
+                        ? "No Piggy Banks Yet"
+                        : "No Results Found"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="text-center">
                     <p className="text-muted-foreground mb-6">
-                      {piggyBanks.length === 0 
+                      {piggyBanks.length === 0
                         ? "Create your first piggy bank and start saving with a partner!"
-                        : "Try adjusting your search or filter criteria."
-                      }
+                        : "Try adjusting your search or filter criteria."}
                     </p>
                     <Button
                       onClick={() => router.push("/piggy-bank/create")}
                       className="w-full"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {piggyBanks.length === 0 ? "Create Your First Piggy Bank" : "Create New Piggy Bank"}
+                      {piggyBanks.length === 0
+                        ? "Create Your First Piggy Bank"
+                        : "Create New Piggy Bank"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -324,7 +353,9 @@ export default function Dashboard() {
                     key={pb.piggyBank.id}
                     piggyBank={pb.piggyBank}
                     membership={pb.membership}
-                    onClick={() => router.push(`/piggy-bank/${pb.piggyBank.id}`)}
+                    onClick={() =>
+                      router.push(`/piggy-bank/${pb.piggyBank.id}`)
+                    }
                   />
                 ))}
               </div>
