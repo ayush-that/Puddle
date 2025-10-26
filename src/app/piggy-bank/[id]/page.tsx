@@ -13,12 +13,17 @@ import { WithdrawalRequest } from "@/components/piggy-bank/withdrawal-request";
 import { WithdrawalApproval } from "@/components/piggy-bank/withdrawal-approval";
 import { TransactionHistory } from "@/components/piggy-bank/transaction-history";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ChatWindow } from "@/components/push/chat-window";
 import {
   ArrowLeft,
   PiggyBank as PiggyBankIcon,
   Users,
   Target,
 } from "lucide-react";
+import { apiClient } from "@/lib/api-client";
+import { useDeposit } from "@/hooks/useDeposit";
+import { useWithdrawal } from "@/hooks/useWithdrawal";
+import { useToast } from "@/hooks/use-toast";
 
 interface PiggyBankData {
   id: string;
@@ -70,6 +75,28 @@ export default function PiggyBankPage() {
   const [isDepositing, setIsDepositing] = useState(false);
   const [isRequestingWithdrawal, setIsRequestingWithdrawal] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const { deposit } = useDeposit();
+  const { approveWithdrawal } = useWithdrawal();
+  const { toast } = useToast();
+
+  const loadPiggyBank = async () => {
+    if (!authenticated || !user || !piggyBankId) return;
+
+    try {
+      setLoading(true);
+      const token = await getAccessToken();
+      if (!token) {
+        console.error("No access token available");
+        return;
+      }
+      const data = await apiClient.getPiggyBank(piggyBankId, token);
+      setPiggyBank(data.piggyBank);
+    } catch (error) {
+      console.error("Failed to load piggy bank:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -78,59 +105,54 @@ export default function PiggyBankPage() {
   }, [ready, authenticated, router]);
 
   useEffect(() => {
-    if (!authenticated || !user || !piggyBankId) return;
-
-    const loadPiggyBank = async () => {
-      try {
-        const token = await getAccessToken();
-        // TODO: Replace with actual API call
-        // const data = await apiClient.getPiggyBank(piggyBankId, token);
-        // setPiggyBank(data);
-
-        // Mock data for now
-        setPiggyBank({
-          id: piggyBankId,
-          name: "Vacation Fund",
-          goalAmount: "2.0",
-          currentAmount: "0.5",
-          status: "active",
-          goalDeadline: "2024-12-31",
-          contractAddress: "0x1234567890123456789012345678901234567890",
-          createdAt: "2024-01-01T00:00:00Z",
-          members: [
-            {
-              role: "creator",
-              user: {
-                walletAddress: "0x1234567890123456789012345678901234567890",
-              },
-            },
-            {
-              role: "partner",
-              user: {
-                walletAddress: "0x0987654321098765432109876543210987654321",
-              },
-            },
-          ],
-          transactions: [],
-        });
-      } catch (error) {
-        console.error("Failed to load piggy bank:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadPiggyBank();
-  }, [authenticated, user, getAccessToken, piggyBankId]);
+  }, [authenticated, user, piggyBankId]);
 
   const handleDeposit = async (amount: string, piggyBankId: string) => {
+    if (!piggyBank?.contractAddress) return;
+
     setIsDepositing(true);
     try {
-      // TODO: Implement actual deposit
-      console.log("Depositing", amount, "to piggy bank", piggyBankId);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 1. Call smart contract deposit function
+      toast({
+        title: "Processing deposit...",
+        description: "Please confirm the transaction in your wallet",
+      });
+
+      const txHash = await deposit(
+        piggyBank.contractAddress as `0x${string}`,
+        amount,
+      );
+
+      // 2. Update database
+      const token = await getAccessToken();
+      if (!token) {
+        throw new Error("No access token available");
+      }
+      await apiClient.recordDeposit(
+        {
+          contractAddress: piggyBank.contractAddress,
+          amount,
+          transactionHash: txHash,
+        },
+        token,
+      );
+
+      toast({
+        title: "Deposit successful!",
+        description: `Deposited ${amount} PUSH`,
+      });
+
+      // 3. Refresh piggy bank data
+      await loadPiggyBank();
     } catch (error) {
       console.error("Deposit failed:", error);
+      toast({
+        title: "Deposit failed",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
     } finally {
       setIsDepositing(false);
     }
@@ -142,29 +164,84 @@ export default function PiggyBankPage() {
   ) => {
     setIsRequestingWithdrawal(true);
     try {
-      // TODO: Implement actual withdrawal request
-      console.log(
-        "Requesting withdrawal of",
-        amount,
-        "from piggy bank",
-        piggyBankId,
+      toast({
+        title: "Requesting withdrawal...",
+        description: "Notifying your partner for approval",
+      });
+
+      const token = await getAccessToken();
+      if (!token) {
+        throw new Error("No access token available");
+      }
+      await apiClient.requestWithdrawal(
+        {
+          piggyBankId,
+          amount,
+        },
+        token,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      toast({
+        title: "Withdrawal requested!",
+        description: "Your partner will be notified to approve",
+      });
+
+      // Refresh piggy bank data
+      await loadPiggyBank();
     } catch (error) {
       console.error("Withdrawal request failed:", error);
+      toast({
+        title: "Request failed",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
     } finally {
       setIsRequestingWithdrawal(false);
     }
   };
 
   const handleApproveWithdrawal = async (withdrawalId: string) => {
+    if (!piggyBank?.contractAddress) return;
+
     setIsApproving(true);
     try {
-      // TODO: Implement actual withdrawal approval
-      console.log("Approving withdrawal", withdrawalId);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 1. Call smart contract to approve withdrawal
+      toast({
+        title: "Approving withdrawal...",
+        description: "Please confirm the transaction in your wallet",
+      });
+
+      await approveWithdrawal(piggyBank.contractAddress as `0x${string}`);
+
+      // 2. Update database to record approval
+      toast({
+        title: "Updating records...",
+        description: "Recording approval in database",
+      });
+
+      const token = await getAccessToken();
+      if (!token) {
+        throw new Error("No access token available");
+      }
+      await apiClient.approveWithdrawal(withdrawalId, token);
+
+      // 3. Smart contract auto-executes if both partners approved
+      toast({
+        title: "Withdrawal executed!",
+        description: "Funds have been transferred successfully",
+      });
+
+      // 4. Refresh piggy bank data
+      await loadPiggyBank();
     } catch (error) {
       console.error("Withdrawal approval failed:", error);
+      toast({
+        title: "Approval failed",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
     } finally {
       setIsApproving(false);
     }
@@ -172,11 +249,18 @@ export default function PiggyBankPage() {
 
   const handleRejectWithdrawal = async (withdrawalId: string) => {
     try {
-      // TODO: Implement actual withdrawal rejection
-      console.log("Rejecting withdrawal", withdrawalId);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast({
+        title: "Rejecting withdrawal...",
+        description: "This feature will be implemented soon",
+      });
+      // TODO: Implement withdrawal rejection API endpoint
     } catch (error) {
       console.error("Withdrawal rejection failed:", error);
+      toast({
+        title: "Rejection failed",
+        description: "Please try again",
+        variant: "destructive",
+      });
     }
   };
 
@@ -271,6 +355,7 @@ export default function PiggyBankPage() {
             {piggyBank.pendingWithdrawal && (
               <WithdrawalApproval
                 withdrawal={piggyBank.pendingWithdrawal}
+                contractAddress={piggyBank.contractAddress as `0x${string}`}
                 onApprove={handleApproveWithdrawal}
                 onReject={handleRejectWithdrawal}
                 isApproving={isApproving}
@@ -312,6 +397,16 @@ export default function PiggyBankPage() {
 
             {/* Transaction History */}
             <TransactionHistory transactions={piggyBank.transactions} />
+
+            {/* Chat */}
+            <ChatWindow
+              piggyBankName={piggyBank.name}
+              partnerAddress={
+                piggyBank.members.find(
+                  (m) => m.user.walletAddress !== user?.wallet?.address,
+                )?.user.walletAddress
+              }
+            />
           </div>
         </div>
       </main>

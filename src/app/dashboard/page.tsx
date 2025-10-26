@@ -18,8 +18,9 @@ import { PiggyBank } from "@/db/schema";
 import { DashboardStats } from "@/components/piggy-bank/dashboard-stats";
 import { SkeletonCard, SkeletonStats } from "@/components/ui/skeleton-card";
 import { ThemeToggle } from "@/components/theme-toggle";
-
+import { NotificationBell } from "@/components/push/notification-bell";
 import { Plus, Search, Filter, X } from "lucide-react";
+import { apiClient } from "@/lib/api-client";
 
 interface PiggyBankWithMembership {
   piggyBank: PiggyBank;
@@ -49,81 +50,32 @@ export default function Dashboard() {
     const loadPiggyBanks = async () => {
       try {
         const token = await getAccessToken();
-        // TODO: Replace with actual API call
-        // const data = await apiClient.getPiggyBanks(token);
-        // setPiggyBanks(data.piggyBanks);
+        console.log(
+          "Loading piggy banks with token:",
+          token ? "present" : "missing",
+        );
 
-        // Mock data for now
-        const mockPiggyBanks: PiggyBankWithMembership[] = [
-          {
-            piggyBank: {
-              id: "1",
-              name: "Vacation Fund 2025",
-              goalAmount: "2.5",
-              currentAmount: "1.2",
-              status: "active",
-              goalDeadline: new Date("2025-12-31T23:59:59Z"),
-              contractAddress: "0x1234567890abcdef1234567890abcdef12345678",
-              createdAt: new Date("2025-01-15T10:30:00Z"),
-            },
-            membership: { role: "creator" },
-          },
-          {
-            piggyBank: {
-              id: "2",
-              name: "Emergency Savings",
-              goalAmount: "5.0",
-              currentAmount: "4.8",
-              status: "active",
-              goalDeadline: new Date("2025-06-30T23:59:59Z"),
-              contractAddress: "0x2345678901bcdef1234567890abcdef123456789",
-              createdAt: new Date("2025-01-10T14:20:00Z"),
-            },
-            membership: { role: "partner" },
-          },
-          {
-            piggyBank: {
-              id: "3",
-              name: "New Laptop Fund",
-              goalAmount: "1.5",
-              currentAmount: "1.5",
-              status: "completed",
-              goalDeadline: new Date("2025-03-15T23:59:59Z"),
-              contractAddress: "0x3456789012cdef1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-05T09:15:00Z"),
-            },
-            membership: { role: "creator" },
-          },
-          {
-            piggyBank: {
-              id: "4",
-              name: "Wedding Expenses",
-              goalAmount: "10.0",
-              currentAmount: "2.1",
-              status: "active",
-              goalDeadline: new Date("2025-08-20T23:59:59Z"),
-              contractAddress: "0x4567890123def1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-20T16:45:00Z"),
-            },
-            membership: { role: "partner" },
-          },
-          {
-            piggyBank: {
-              id: "5",
-              name: "Gaming Setup",
-              goalAmount: "3.0",
-              currentAmount: "0.3",
-              status: "active",
-              goalDeadline: new Date("2025-11-30T23:59:59Z"),
-              contractAddress: "0x5678901234ef1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-25T11:30:00Z"),
-            },
-            membership: { role: "creator" },
-          },
-        ];
-        setPiggyBanks(mockPiggyBanks);
+        if (!token) {
+          console.error("No access token available");
+          return;
+        }
+
+        // First ensure user exists in database
+        console.log("Creating/getting user...");
+        const userResponse = await apiClient.getUser(token);
+        console.log("User response:", userResponse);
+
+        // Then load piggy banks
+        console.log("Loading piggy banks...");
+        const data = await apiClient.getPiggyBanks(token);
+        console.log("Piggy banks data:", data);
+        setPiggyBanks(data.piggyBanks);
       } catch (error) {
         console.error("Failed to load piggy banks:", error);
+        console.error("Error details:", {
+          message: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+        });
       } finally {
         setLoading(false);
       }
@@ -201,7 +153,10 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">Puddle</h1>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>

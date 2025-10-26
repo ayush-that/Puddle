@@ -1,7 +1,6 @@
 "use client";
 
 import { PrivyProvider } from "@privy-io/react-auth";
-import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import { ThemeProvider } from "./theme-provider";
 
 // Suppress the Privy key prop warning in development
@@ -18,6 +17,26 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   };
 }
 
+// Define Push Chain Testnet configuration
+const pushChainTestnet = {
+  id: 42101,
+  name: "Push Chain Testnet",
+  network: "push-testnet",
+  nativeCurrency: {
+    name: "Push Token",
+    symbol: "PUSH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: [
+        process.env.NEXT_PUBLIC_PUSH_CHAIN_RPC_URL ||
+          "https://evm.rpc-testnet-donut-node1.push.org/",
+      ],
+    },
+  },
+};
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider defaultTheme="light" storageKey="theme">
@@ -29,18 +48,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             ethereum: {
               createOnLogin: "users-without-wallets",
             },
-            solana: {
-              createOnLogin: "users-without-wallets",
-            },
           },
           appearance: {
-            walletChainType: "ethereum-and-solana",
+            walletChainType: "ethereum-only",
             theme: "light",
             accentColor: "#0052FF",
           },
-          externalWallets: {
-            solana: { connectors: toSolanaWalletConnectors() },
-          },
+          defaultChain: pushChainTestnet,
+          supportedChains: [pushChainTestnet],
           loginMethods: ["email", "wallet", "google", "twitter"],
         }}
       >

@@ -19,7 +19,7 @@ export default function StatsPage() {
         name: "Vacation Fund 2025",
         goalAmount: "2.5",
         currentAmount: "1.2",
-        status: "active",
+        status: "active" as const,
         goalDeadline: new Date("2025-12-31T23:59:59Z"),
         contractAddress: "0x1234567890abcdef1234567890abcdef12345678",
         createdAt: new Date("2025-01-15T10:30:00Z"),
@@ -32,7 +32,7 @@ export default function StatsPage() {
         name: "Emergency Savings",
         goalAmount: "5.0",
         currentAmount: "4.8",
-        status: "active",
+        status: "active" as const,
         goalDeadline: new Date("2025-06-30T23:59:59Z"),
         contractAddress: "0x2345678901bcdef1234567890abcdef123456789",
         createdAt: new Date("2025-01-10T14:20:00Z"),
@@ -106,9 +106,6 @@ export default function StatsPage() {
                       </div>
                       {stat.trend === "up" && (
                         <TrendingUp className="h-4 w-4 text-green-500" />
-                      )}
-                      {stat.trend === "down" && (
-                        <TrendingDown className="h-4 w-4 text-red-500" />
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground mb-1">

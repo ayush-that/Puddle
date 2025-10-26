@@ -27,6 +27,7 @@ interface WithdrawalApproval {
 
 interface WithdrawalApprovalProps {
   withdrawal: WithdrawalApproval;
+  contractAddress: `0x${string}`;
   onApprove: (withdrawalId: string) => Promise<void>;
   onReject: (withdrawalId: string) => Promise<void>;
   isApproving?: boolean;

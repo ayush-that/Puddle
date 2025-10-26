@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { createWalletClient, createPublicClient, http, custom } from "viem";
-import { sepolia } from "viem/chains";
+import { PUSH_CHAIN_TESTNET } from "@/contracts/types";
 
 // Mock contract ABI - replace with actual ABI
 const PIGGY_BANK_ABI = [
@@ -66,16 +66,17 @@ const getWalletClient = async (user: any) => {
 
   return createWalletClient({
     account: user.wallet.address as `0x${string}`,
-    chain: sepolia,
+    chain: PUSH_CHAIN_TESTNET,
     transport: custom(provider),
   });
 };
 
 const getPublicClient = () => {
   return createPublicClient({
-    chain: sepolia,
+    chain: PUSH_CHAIN_TESTNET,
     transport: http(
-      process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL || "https://rpc.sepolia.org",
+      process.env.NEXT_PUBLIC_PUSH_CHAIN_RPC_URL ||
+        "https://evm.rpc-testnet-donut-node1.push.org/",
     ),
   });
 };
@@ -150,9 +151,9 @@ export function useCreatePiggyBank() {
       const walletClient = await getWalletClient(user);
       const publicClient = getPublicClient();
 
-      // Mock factory address - replace with actual
-      const factoryAddress =
-        "0x1234567890123456789012345678901234567890" as `0x${string}`;
+      // Use the deployed factory address
+      const factoryAddress = (process.env.NEXT_PUBLIC_FACTORY_ADDRESS ||
+        "0x0E2514e3aaF9a60cBD82B5e1f996d339AD16ead9") as `0x${string}`;
 
       const { request } = await publicClient.simulateContract({
         address: factoryAddress,

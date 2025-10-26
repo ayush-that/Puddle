@@ -4,7 +4,7 @@ import { PiggyBank } from "@/db/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { PiggyBank as PiggyBankIcon, Calendar, Target } from "lucide-react";
+import { Calendar, Target } from "lucide-react";
 
 interface PiggyBankCardProps {
   piggyBank: PiggyBank;
@@ -37,7 +37,6 @@ export function PiggyBankCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <PiggyBankIcon className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-lg font-semibold text-foreground">
               {piggyBank.name}
             </CardTitle>

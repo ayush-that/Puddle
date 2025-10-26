@@ -7,11 +7,16 @@ import { PiggyBankCreateForm } from "@/components/piggy-bank/piggy-bank-create-f
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCreatePiggyBank } from "@/hooks/usePiggyBank";
+import { apiClient } from "@/lib/api-client";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreatePiggyBank() {
-  const { authenticated, ready } = usePrivy();
+  const { authenticated, ready, getAccessToken } = usePrivy();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
+  const { createPiggyBank } = useCreatePiggyBank();
+  const { toast } = useToast();
 
   if (!ready) {
     return (
@@ -33,21 +38,66 @@ export default function CreatePiggyBank() {
     setIsCreating(true);
 
     try {
-      // TODO: Implement actual piggy bank creation
       // 1. Deploy smart contract
+      toast({
+        title: "Deploying contract...",
+        description: "Please confirm the transaction in your wallet",
+      });
+
+      const contractAddress = await createPiggyBank(
+        data.partnerAddress,
+        data.goalAmount,
+        data.goalDeadline
+          ? Math.floor(new Date(data.goalDeadline).getTime() / 1000)
+          : 0,
+      );
+
       // 2. Save to database
-      // 3. Redirect to piggy bank page
+      toast({
+        title: "Saving piggy bank...",
+        description: "Creating your piggy bank record",
+      });
 
-      console.log("Creating piggy bank with data:", data);
+      const token = await getAccessToken();
+      if (!token) {
+        throw new Error("No access token available");
+      }
+      const result = await apiClient.createPiggyBank(
+        {
+          name: data.name,
+          goalAmount: data.goalAmount,
+          goalDeadline: data.goalDeadline,
+          contractAddress,
+        },
+        token,
+      );
 
-      // Mock delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 3. Invite partner
+      if (result.piggyBank?.id) {
+        await apiClient.invitePartner(
+          result.piggyBank.id,
+          data.partnerAddress,
+          token,
+        );
+      }
 
-      // Redirect to dashboard for now
-      router.push("/dashboard");
+      toast({
+        title: "Success!",
+        description: "Your piggy bank has been created",
+      });
+
+      // 4. Redirect to piggy bank page
+      router.push(`/piggy-bank/${result.piggyBank.id}`);
     } catch (error) {
       console.error("Failed to create piggy bank:", error);
-      alert("Failed to create piggy bank. Please try again.");
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create piggy bank",
+        variant: "destructive",
+      });
     } finally {
       setIsCreating(false);
     }

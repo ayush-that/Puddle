@@ -1,6 +1,7 @@
 {
-  "name": "create-next-app",
-  "version": "0.1.0",
+  "name": "puddle-piggy-bank",
+  "version": "1.0.0",
+  "description": "Onchain piggy bank platform for collaborative savings with Push Protocol and Privy",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -8,7 +9,9 @@
     "start": "next start",
     "format": "prettier . --write",
     "format:solidity": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
+    "lint": "next lint",
     "lint:solidity": "prettier --list-different --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
+    "type-check": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
@@ -17,8 +20,9 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
-    "@next/font": "^14.2.15",
     "@privy-io/react-auth": "^2.25.0",
+    "@pushprotocol/restapi": "^1.7.27",
+    "@pushprotocol/uiweb": "^1.5.5",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-icons": "^1.3.2",
@@ -49,6 +53,7 @@
     "react-toastify": "^11.0.5",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0",
     "viem": "^2.38.0",
     "zod": "^4.1.12"
   },
@@ -58,6 +63,7 @@
     "@types/pg": "^8.15.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
+    "@types/uuid": "^10.0.0",
     "drizzle-kit": "^0.31.5",
     "pg": "^8.16.3",
     "prettier": "3.6.2",
@@ -65,6 +71,9 @@
     "tailwindcss": "^4.1.14",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }
