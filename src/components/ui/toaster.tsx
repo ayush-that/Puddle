@@ -19,6 +19,9 @@ export function Toaster() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
+          role={toast.variant === "destructive" ? "alert" : "status"}
+          aria-live={toast.variant === "destructive" ? "assertive" : "polite"}
+          aria-atomic="true"
           className={`pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-lg border p-4 pr-8 shadow-lg transition-all mb-2 ${
             toast.variant === "destructive"
               ? "border-red-500 bg-red-50 text-red-900"
@@ -34,6 +37,8 @@ export function Toaster() {
             )}
           </div>
           <button
+            type="button"
+            aria-label="Dismiss notification"
             onClick={() => dismiss(toast.id)}
             className="absolute right-2 top-2 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100"
           >

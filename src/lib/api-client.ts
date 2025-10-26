@@ -148,6 +148,39 @@ class APIClient {
       authToken,
     });
   }
+
+  // Audit/Reconciliation APIs
+  async recordOrphanedContract(
+    data: {
+      contractAddress: string;
+      reason: string;
+      error: string;
+      userData: any;
+    },
+    authToken: string,
+  ) {
+    return this.request<{ success: boolean }>("/api/audit/orphaned-contract", {
+      method: "POST",
+      authToken,
+      body: JSON.stringify(data),
+    });
+  }
+
+  async recordPendingInvite(
+    data: {
+      piggyBankId: string;
+      partnerAddress: string;
+      attempts: number;
+      lastError: string;
+    },
+    authToken: string,
+  ) {
+    return this.request<{ success: boolean }>("/api/audit/pending-invite", {
+      method: "POST",
+      authToken,
+      body: JSON.stringify(data),
+    });
+  }
 }
 
 export const apiClient = new APIClient();

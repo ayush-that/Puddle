@@ -3,58 +3,14 @@
 import { useState, useEffect } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { createWalletClient, createPublicClient, http, custom } from "viem";
-import { PUSH_CHAIN_TESTNET } from "@/contracts/types";
+import {
+  PUSH_CHAIN_TESTNET,
+  PIGGY_BANK_FACTORY_ADDRESS,
+  PiggyBankABI,
+} from "@/contracts/types";
 
-// Mock contract ABI - replace with actual ABI
-const PIGGY_BANK_ABI = [
-  {
-    inputs: [
-      { internalType: "address", name: "partner1", type: "address" },
-      { internalType: "address", name: "partner2", type: "address" },
-      { internalType: "uint256", name: "goalAmount", type: "uint256" },
-      { internalType: "uint256", name: "goalDeadline", type: "uint256" },
-    ],
-    name: "createPiggyBank",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "deposit",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-    name: "requestWithdrawal",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "approveWithdrawal",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getBalance",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getGoalProgress",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
+// PiggyBank contract ABI
+const PIGGY_BANK_ABI = PiggyBankABI;
 
 // Shared functions for wallet and public clients
 const getWalletClient = async (user: any) => {
@@ -153,7 +109,7 @@ export function useCreatePiggyBank() {
 
       // Use the deployed factory address
       const factoryAddress = (process.env.NEXT_PUBLIC_FACTORY_ADDRESS ||
-        "0x0E2514e3aaF9a60cBD82B5e1f996d339AD16ead9") as `0x${string}`;
+        PIGGY_BANK_FACTORY_ADDRESS) as `0x${string}`;
 
       const { request } = await publicClient.simulateContract({
         address: factoryAddress,

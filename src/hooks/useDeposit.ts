@@ -1,7 +1,13 @@
 "use client";
 
 import { usePrivy } from "@privy-io/react-auth";
-import { createWalletClient, createPublicClient, http, custom } from "viem";
+import {
+  createWalletClient,
+  createPublicClient,
+  http,
+  custom,
+  parseEther,
+} from "viem";
 import { PUSH_CHAIN_TESTNET } from "@/contracts/types";
 import PiggyBankABI from "@/contracts/PiggyBankABI.json";
 
@@ -46,7 +52,7 @@ export function useDeposit() {
         address: contractAddress,
         abi: PiggyBankABI,
         functionName: "deposit",
-        value: BigInt(parseFloat(amount) * 1e18),
+        value: parseEther(amount),
         account: user.wallet.address as `0x${string}`,
       });
 

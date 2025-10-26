@@ -3,7 +3,6 @@ import { getAuthUser } from "@/lib/auth";
 import { db } from "@/db";
 import { users, piggyBanks, withdrawalApprovals } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { PiggyBankNotifications } from "@/services/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -103,19 +102,12 @@ export async function POST(
       const piggyBank = piggyBankResults[0];
       const initiator = initiatorResults[0];
 
-      // Send notification to initiator
-      if (initiator.walletAddress) {
-        try {
-          await PiggyBankNotifications.withdrawalApproved(
-            initiator.walletAddress,
-            withdrawal.withdrawalAmount,
-            piggyBank.name,
-            piggyBank.id,
-          );
-        } catch (error) {
-          console.error("Failed to send approval notification:", error);
-        }
-      }
+      // Notifications removed - Push Protocol integration disabled
+      console.log("Withdrawal approved successfully:", {
+        amount: withdrawal.withdrawalAmount,
+        piggyBankName: piggyBank.name,
+        initiator: initiator.walletAddress,
+      });
     }
 
     return NextResponse.json({ withdrawal: updatedWithdrawal });

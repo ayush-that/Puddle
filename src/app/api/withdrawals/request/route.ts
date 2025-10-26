@@ -8,7 +8,6 @@ import {
   piggyBankMembers,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { PiggyBankNotifications } from "@/services/notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -87,20 +86,12 @@ export async function POST(request: NextRequest) {
       (m) => m.user.walletAddress !== user.walletAddress,
     );
 
-    // Send notification to partner for approval
-    if (partner && partner.user.walletAddress && user.walletAddress) {
-      try {
-        await PiggyBankNotifications.withdrawalRequested(
-          partner.user.walletAddress,
-          user.walletAddress,
-          amount,
-          piggyBank.name,
-          piggyBank.id,
-        );
-      } catch (error) {
-        console.error("Failed to send withdrawal request notification:", error);
-      }
-    }
+    // Notifications removed - Push Protocol integration disabled
+    console.log("Withdrawal requested successfully:", {
+      amount,
+      piggyBankName: piggyBank.name,
+      initiator: user.walletAddress,
+    });
 
     return NextResponse.json({ withdrawal }, { status: 201 });
   } catch (error) {

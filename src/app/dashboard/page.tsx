@@ -18,7 +18,6 @@ import { PiggyBank } from "@/db/schema";
 import { DashboardStats } from "@/components/piggy-bank/dashboard-stats";
 import { SkeletonCard, SkeletonStats } from "@/components/ui/skeleton-card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { NotificationBell } from "@/components/push/notification-bell";
 import { Plus, Search, Filter, X } from "lucide-react";
 import { apiClient } from "@/lib/api-client";
 
@@ -154,7 +153,6 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-foreground">Puddle</h1>
             </div>
             <div className="flex items-center gap-2">
-              <NotificationBell />
               <ThemeToggle />
             </div>
           </div>

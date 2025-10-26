@@ -2,6 +2,7 @@
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { ThemeProvider } from "./theme-provider";
+import { PUSH_CHAIN_TESTNET } from "@/contracts/types";
 
 // Suppress the Privy key prop warning in development
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
@@ -16,26 +17,6 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     originalError.apply(console, args);
   };
 }
-
-// Define Push Chain Testnet configuration
-const pushChainTestnet = {
-  id: 42101,
-  name: "Push Chain Testnet",
-  network: "push-testnet",
-  nativeCurrency: {
-    name: "Push Token",
-    symbol: "PUSH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: [
-        process.env.NEXT_PUBLIC_PUSH_CHAIN_RPC_URL ||
-          "https://evm.rpc-testnet-donut-node1.push.org/",
-      ],
-    },
-  },
-};
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -54,9 +35,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             theme: "light",
             accentColor: "#0052FF",
           },
-          defaultChain: pushChainTestnet,
-          supportedChains: [pushChainTestnet],
-          loginMethods: ["email", "wallet", "google", "twitter"],
+          defaultChain: PUSH_CHAIN_TESTNET,
+          supportedChains: [PUSH_CHAIN_TESTNET],
+          loginMethods: ["wallet"],
         }}
       >
         {children}

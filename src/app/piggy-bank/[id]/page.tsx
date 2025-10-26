@@ -13,7 +13,6 @@ import { WithdrawalRequest } from "@/components/piggy-bank/withdrawal-request";
 import { WithdrawalApproval } from "@/components/piggy-bank/withdrawal-approval";
 import { TransactionHistory } from "@/components/piggy-bank/transaction-history";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ChatWindow } from "@/components/push/chat-window";
 import {
   ArrowLeft,
   PiggyBank as PiggyBankIcon,
@@ -397,16 +396,6 @@ export default function PiggyBankPage() {
 
             {/* Transaction History */}
             <TransactionHistory transactions={piggyBank.transactions} />
-
-            {/* Chat */}
-            <ChatWindow
-              piggyBankName={piggyBank.name}
-              partnerAddress={
-                piggyBank.members.find(
-                  (m) => m.user.walletAddress !== user?.wallet?.address,
-                )?.user.walletAddress
-              }
-            />
           </div>
         </div>
       </main>

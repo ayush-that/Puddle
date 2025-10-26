@@ -65,6 +65,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (
+      typeof goalAmount !== "string" ||
+      isNaN(Number(goalAmount)) ||
+      Number(goalAmount) <= 0
+    ) {
+      return NextResponse.json(
+        { error: "goalAmount must be a positive number" },
+        { status: 400 },
+      );
+    }
+
+    if (
+      typeof contractAddress !== "string" ||
+      !/^0x[a-fA-F0-9]{40}$/.test(contractAddress)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid Ethereum address format" },
+        { status: 400 },
+      );
+    }
+
+    // Validate goalDeadline if provided
+    if (goalDeadline) {
+      const deadline = new Date(goalDeadline);
+
+      if (isNaN(deadline.getTime())) {
+        return NextResponse.json(
+          { error: "Invalid date format for goalDeadline" },
+          { status: 400 },
+        );
+      }
+
+      if (deadline <= new Date()) {
+        return NextResponse.json(
+          { error: "goalDeadline must be in the future" },
+          { status: 400 },
+        );
+      }
+    }
+
     // Get user from database
     console.log("Looking for user with privyUserId:", authUser.privyUserId);
     const existingUsers = await db

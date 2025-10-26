@@ -3,7 +3,6 @@ import { getAuthUser } from "@/lib/auth";
 import { db } from "@/db";
 import { users, piggyBanks, piggyBankMembers } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { PiggyBankNotifications } from "@/services/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -85,18 +84,12 @@ export async function POST(
       role: "partner",
     });
 
-    // Send Push notification
-    try {
-      await PiggyBankNotifications.invitedToJoin(
-        partnerAddress,
-        authUser.walletAddress,
-        piggyBank.name,
-        piggyBank.id,
-      );
-    } catch (error) {
-      console.error("Failed to send notification:", error);
-      // Don't fail the request if notification fails
-    }
+    // Notifications removed - Push Protocol integration disabled
+    console.log("Partner invited successfully:", {
+      partnerAddress,
+      piggyBankName: piggyBank.name,
+      inviter: authUser.walletAddress,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

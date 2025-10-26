@@ -36,66 +36,179 @@ export default function CreatePiggyBank() {
 
   const handleCreatePiggyBank = async (data: any) => {
     setIsCreating(true);
+    let contractAddress: string | null = null;
+    let piggyBankId: string | null = null;
 
     try {
-      // 1. Deploy smart contract
+      // Validate access token early
+      const token = await getAccessToken();
+      if (!token) {
+        throw new Error("Authentication required. Please log in again.");
+      }
+
+      // Step 1: Deploy smart contract
       toast({
         title: "Deploying contract...",
         description: "Please confirm the transaction in your wallet",
       });
 
-      const contractAddress = await createPiggyBank(
-        data.partnerAddress,
-        data.goalAmount,
-        data.goalDeadline
-          ? Math.floor(new Date(data.goalDeadline).getTime() / 1000)
-          : 0,
-      );
+      try {
+        contractAddress = await createPiggyBank(
+          data.partnerAddress,
+          data.goalAmount,
+          data.goalDeadline
+            ? Math.floor(new Date(data.goalDeadline).getTime() / 1000)
+            : 0,
+        );
 
-      // 2. Save to database
+        // Validate contract deployment
+        if (!contractAddress) {
+          throw new Error("Contract deployment failed - no address returned");
+        }
+
+        console.log("Contract deployed successfully:", contractAddress);
+      } catch (error) {
+        console.error("Contract deployment failed:", error);
+        throw new Error(
+          `Contract deployment failed: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`,
+        );
+      }
+
+      // Step 2: Save to database
       toast({
         title: "Saving piggy bank...",
         description: "Creating your piggy bank record",
       });
 
-      const token = await getAccessToken();
-      if (!token) {
-        throw new Error("No access token available");
-      }
-      const result = await apiClient.createPiggyBank(
-        {
-          name: data.name,
-          goalAmount: data.goalAmount,
-          goalDeadline: data.goalDeadline,
-          contractAddress,
-        },
-        token,
-      );
-
-      // 3. Invite partner
-      if (result.piggyBank?.id) {
-        await apiClient.invitePartner(
-          result.piggyBank.id,
-          data.partnerAddress,
+      let result;
+      try {
+        result = await apiClient.createPiggyBank(
+          {
+            name: data.name,
+            goalAmount: data.goalAmount,
+            goalDeadline: data.goalDeadline,
+            contractAddress,
+          },
           token,
+        );
+
+        if (!result.piggyBank?.id) {
+          throw new Error("Database save failed - no piggy bank ID returned");
+        }
+
+        piggyBankId = result.piggyBank.id;
+        console.log("Piggy bank saved successfully:", piggyBankId);
+      } catch (error) {
+        console.error("Database save failed:", error);
+
+        // Compensating action: Record orphaned contract for ops reconciliation
+        try {
+          await apiClient.recordOrphanedContract(
+            {
+              contractAddress,
+              reason: "database_save_failed",
+              error: error instanceof Error ? error.message : "Unknown error",
+              userData: {
+                name: data.name,
+                goalAmount: data.goalAmount,
+                partnerAddress: data.partnerAddress,
+              },
+            },
+            token,
+          );
+          console.log("Orphaned contract recorded for reconciliation");
+        } catch (auditError) {
+          console.error("Failed to record orphaned contract:", auditError);
+        }
+
+        throw new Error(
+          `Failed to save piggy bank: ${
+            error instanceof Error ? error.message : "Database error"
+          }. Contract was deployed but not saved. Support has been notified.`,
         );
       }
 
-      toast({
-        title: "Success!",
-        description: "Your piggy bank has been created",
-      });
+      // Step 3: Invite partner with retry logic
+      if (piggyBankId) {
+        toast({
+          title: "Inviting partner...",
+          description: "Sending invitation to your partner",
+        });
 
-      // 4. Redirect to piggy bank page
-      router.push(`/piggy-bank/${result.piggyBank.id}`);
+        let inviteSuccess = false;
+        let lastInviteError: Error | null = null;
+
+        // Retry logic with exponential backoff
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            await apiClient.invitePartner(
+              piggyBankId,
+              data.partnerAddress,
+              token,
+            );
+            inviteSuccess = true;
+            console.log("Partner invited successfully");
+            break;
+          } catch (error) {
+            lastInviteError =
+              error instanceof Error ? error : new Error("Unknown error");
+            console.error(`Invite attempt ${attempt} failed:`, error);
+
+            if (attempt < 3) {
+              // Exponential backoff: 1s, 2s, 4s
+              const delay = Math.pow(2, attempt - 1) * 1000;
+              console.log(`Retrying invite in ${delay}ms...`);
+              await new Promise((resolve) => setTimeout(resolve, delay));
+            }
+          }
+        }
+
+        if (!inviteSuccess) {
+          // Record pending invite for retry
+          try {
+            await apiClient.recordPendingInvite(
+              {
+                piggyBankId,
+                partnerAddress: data.partnerAddress,
+                attempts: 3,
+                lastError: lastInviteError?.message || "Unknown error",
+              },
+              token,
+            );
+            console.log("Pending invite recorded for retry");
+          } catch (auditError) {
+            console.error("Failed to record pending invite:", auditError);
+          }
+
+          // Show partial success message
+          toast({
+            title: "Piggy bank created!",
+            description:
+              "Partner invitation is pending. They will be notified shortly.",
+          });
+        } else {
+          toast({
+            title: "Success!",
+            description: "Your piggy bank has been created and partner invited",
+          });
+        }
+      }
+
+      // Redirect to piggy bank page
+      if (piggyBankId) {
+        router.push(`/piggy-bank/${piggyBankId}`);
+      }
     } catch (error) {
       console.error("Failed to create piggy bank:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create piggy bank";
+
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create piggy bank",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

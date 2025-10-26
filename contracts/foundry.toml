@@ -15,5 +15,14 @@ push_testnet = "${PUSH_TESTNET_RPC_URL}"
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
 mainnet = { key = "${ETHERSCAN_API_KEY}" }
+# Push Chain uses BlockScout explorer
+push_testnet = { 
+  key = "", 
+  url = "https://explorer.push.org/api" 
+}
+push_mainnet = { 
+  key = "", 
+  url = "https://explorer.push.org/api" 
+}
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

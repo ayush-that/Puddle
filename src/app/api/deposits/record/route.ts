@@ -3,7 +3,6 @@ import { getAuthUser } from "@/lib/auth";
 import { db } from "@/db";
 import { users, piggyBanks, transactions, piggyBankMembers } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { PiggyBankNotifications } from "@/services/notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,58 +92,12 @@ export async function POST(request: NextRequest) {
       (m) => m.user.walletAddress !== user.walletAddress,
     );
 
-    // Send notification to partner
-    if (partner && partner.user.walletAddress && user.walletAddress) {
-      try {
-        await PiggyBankNotifications.depositMade(
-          partner.user.walletAddress,
-          user.walletAddress,
-          amount,
-          piggyBank.name,
-          piggyBank.id,
-        );
-      } catch (error) {
-        console.error("Failed to send deposit notification:", error);
-      }
-    }
-
-    // Check for milestone notifications
-    const progress =
-      (parseFloat(newAmount) / parseFloat(piggyBank.goalAmount)) * 100;
-    const milestones = [25, 50, 75, 100];
-
-    for (const milestone of milestones) {
-      const previousProgress =
-        (parseFloat(piggyBank.currentAmount) /
-          parseFloat(piggyBank.goalAmount)) *
-        100;
-
-      if (previousProgress < milestone && progress >= milestone) {
-        try {
-          const allAddresses = members
-            .map((m) => m.user.walletAddress)
-            .filter((addr): addr is string => addr !== null);
-
-          if (milestone === 100) {
-            await PiggyBankNotifications.goalReached(
-              allAddresses,
-              piggyBank.name,
-              piggyBank.goalAmount,
-              piggyBank.id,
-            );
-          } else {
-            await PiggyBankNotifications.goalMilestone(
-              allAddresses,
-              milestone,
-              piggyBank.name,
-              piggyBank.id,
-            );
-          }
-        } catch (error) {
-          console.error("Failed to send milestone notification:", error);
-        }
-      }
-    }
+    // Notifications removed - Push Protocol integration disabled
+    console.log("Deposit recorded successfully:", {
+      amount,
+      piggyBankName: piggyBank.name,
+      newTotal: newAmount,
+    });
 
     return NextResponse.json({ transaction }, { status: 201 });
   } catch (error) {

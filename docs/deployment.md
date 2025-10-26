@@ -179,6 +179,12 @@ Factory Address: 0x0E2514e3aaF9a60cBD82B5e1f996d339AD16ead9
 - PUSH tokens for gas fees on mainnet
 - Wallet private key with funds
 
+**Important**: Push Chain uses BlockScout explorer, not Etherscan. The verification process is different:
+
+- **No API key required** for BlockScout verification
+- **Different API endpoints** than Etherscan
+- **BlockScout-compatible** verification methods
+
 **Deployment Steps**:
 
 1. **Update Environment Variables**:
@@ -190,7 +196,8 @@ Factory Address: 0x0E2514e3aaF9a60cBD82B5e1f996d339AD16ead9
    # Edit .env:
    PUSH_MAINNET_RPC_URL="https://evm.rpc-mainnet-node1.push.org/"
    PRIVATE_KEY="your-deployer-private-key"
-   ETHERSCAN_API_KEY="" # Optional for verification
+   # Push Chain uses BlockScout, not Etherscan
+   # No API key required for verification
    ```
 
 2. **Update Foundry Config**:
@@ -229,13 +236,27 @@ Factory Address: 0x0E2514e3aaF9a60cBD82B5e1f996d339AD16ead9
    ```
 
 6. **Verify Contract (Optional)**:
+
    ```bash
-   # If verification failed during deployment
+   # Push Chain uses BlockScout explorer (no API key required)
+   # If verification failed during deployment, retry with:
    forge verify-contract \
      0xYourFactoryAddress \
      src/PiggyBankFactory.sol:PiggyBankFactory \
-     --chain-id 42100 \
+     --chain push_mainnet \
      --constructor-args $(cast abi-encode "constructor()")
+
+   # Alternative: Use BlockScout API directly
+   curl -X POST "https://explorer.push.org/api/v1/solidity/sources:verify-standard-json" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "contracts": [{
+         "chainId": "42100",
+         "address": "0xYourFactoryAddress"
+       }],
+       "compiler": "v0.8.24+commit.e11b9ed9",
+       "input": "YOUR_STANDARD_JSON_INPUT"
+     }'
    ```
 
 ### 3.3 Update Contract ABIs
