@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Plus, 
-  ArrowUpCircle, 
-  Bell, 
-  Share2, 
+import {
+  Plus,
+  ArrowUpCircle,
+  Bell,
+  Share2,
   Settings,
   TrendingUp,
-  Users
+  Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +27,7 @@ export function QuickActions({ className }: QuickActionsProps) {
       icon: Plus,
       onClick: () => router.push("/piggy-bank/create"),
       variant: "default" as const,
-      className: "bg-primary hover:bg-primary/90"
+      className: "bg-primary hover:bg-primary/90",
     },
     {
       title: "Quick Deposit",
@@ -38,7 +38,8 @@ export function QuickActions({ className }: QuickActionsProps) {
         console.log("Quick deposit clicked");
       },
       variant: "outline" as const,
-      className: "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+      className:
+        "border-primary text-primary hover:bg-primary hover:text-primary-foreground",
     },
     {
       title: "Notifications",
@@ -49,7 +50,8 @@ export function QuickActions({ className }: QuickActionsProps) {
         console.log("Notifications clicked");
       },
       variant: "outline" as const,
-      className: "border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
+      className:
+        "border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white",
     },
     {
       title: "Share Bank",
@@ -60,8 +62,9 @@ export function QuickActions({ className }: QuickActionsProps) {
         console.log("Share clicked");
       },
       variant: "outline" as const,
-      className: "border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-    }
+      className:
+        "border-green-500 text-green-500 hover:bg-green-500 hover:text-white",
+    },
   ];
 
   const quickStats = [
@@ -69,14 +72,14 @@ export function QuickActions({ className }: QuickActionsProps) {
       title: "Active Banks",
       value: "4",
       icon: TrendingUp,
-      color: "text-blue-600 dark:text-blue-400"
+      color: "text-blue-600 dark:text-blue-400",
     },
     {
       title: "Partners",
       value: "3",
       icon: Users,
-      color: "text-green-600 dark:text-green-400"
-    }
+      color: "text-green-600 dark:text-green-400",
+    },
   ];
 
   return (
@@ -131,7 +134,9 @@ export function QuickActions({ className }: QuickActionsProps) {
                   <Icon className="h-5 w-5 flex-shrink-0" />
                   <div className="text-left flex-1">
                     <div className="font-medium">{action.title}</div>
-                    <div className="text-xs opacity-80">{action.description}</div>
+                    <div className="text-xs opacity-80">
+                      {action.description}
+                    </div>
                   </div>
                 </div>
               </Button>

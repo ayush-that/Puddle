@@ -7,7 +7,14 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowUp, AlertTriangle, Users } from "lucide-react";
 
@@ -25,12 +32,12 @@ interface WithdrawalRequestProps {
   isRequesting?: boolean;
 }
 
-export function WithdrawalRequest({ 
-  contractAddress, 
-  piggyBankId, 
+export function WithdrawalRequest({
+  contractAddress,
+  piggyBankId,
   currentBalance,
-  onRequestWithdrawal, 
-  isRequesting = false 
+  onRequestWithdrawal,
+  isRequesting = false,
 }: WithdrawalRequestProps) {
   const form = useForm<WithdrawalForm>({
     resolver: zodResolver(withdrawalSchema),
@@ -63,19 +70,24 @@ export function WithdrawalRequest({
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Withdrawals require approval from both partners. Your partner will be notified when you request a withdrawal.
+            Withdrawals require approval from both partners. Your partner will
+            be notified when you request a withdrawal.
           </AlertDescription>
         </Alert>
 
         <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
           <Users className="h-4 w-4 text-gray-600" />
           <span className="text-sm text-gray-600">
-            Available balance: <span className="font-semibold">{maxAmount.toFixed(4)} ETH</span>
+            Available balance:{" "}
+            <span className="font-semibold">{maxAmount.toFixed(4)} ETH</span>
           </span>
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="amount"
@@ -96,11 +108,7 @@ export function WithdrawalRequest({
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isRequesting}
-            >
+            <Button type="submit" className="w-full" disabled={isRequesting}>
               {isRequesting ? "Requesting..." : "Request Withdrawal"}
             </Button>
           </form>
@@ -109,4 +117,3 @@ export function WithdrawalRequest({
     </Card>
   );
 }
-

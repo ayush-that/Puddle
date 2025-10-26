@@ -14,10 +14,19 @@ interface PiggyBankCardProps {
   onClick: () => void;
 }
 
-export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardProps) {
-  const progress = (parseFloat(piggyBank.currentAmount) / parseFloat(piggyBank.goalAmount)) * 100;
+export function PiggyBankCard({
+  piggyBank,
+  membership,
+  onClick,
+}: PiggyBankCardProps) {
+  const progress =
+    (parseFloat(piggyBank.currentAmount) / parseFloat(piggyBank.goalAmount)) *
+    100;
   const daysLeft = piggyBank.goalDeadline
-    ? Math.ceil((new Date(piggyBank.goalDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    ? Math.ceil(
+        (new Date(piggyBank.goalDeadline).getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24),
+      )
     : null;
 
   const getStatusColor = (status: string) => {
@@ -34,7 +43,7 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
   };
 
   return (
-    <Card 
+    <Card
       className="cursor-pointer hover:shadow-lg transition-all duration-200"
       onClick={onClick}
     >
@@ -46,7 +55,7 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
               {piggyBank.name}
             </CardTitle>
           </div>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="outline" className="text-xs">
             {membership.role}
           </Badge>
         </div>
@@ -79,7 +88,11 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
           <div className="space-y-1">
             <p className="text-muted-foreground">Remaining</p>
             <p className="font-semibold text-foreground">
-              {(parseFloat(piggyBank.goalAmount) - parseFloat(piggyBank.currentAmount)).toFixed(4)} ETH
+              {(
+                parseFloat(piggyBank.goalAmount) -
+                parseFloat(piggyBank.currentAmount)
+              ).toFixed(4)}{" "}
+              ETH
             </p>
           </div>
         </div>
@@ -90,9 +103,13 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">
               {daysLeft > 0 ? (
-                <span className="font-medium text-foreground">{daysLeft} days left</span>
+                <span className="font-medium text-foreground">
+                  {daysLeft} days left
+                </span>
               ) : (
-                <span className="font-medium text-destructive">Deadline passed</span>
+                <span className="font-medium text-destructive">
+                  Deadline passed
+                </span>
               )}
             </span>
           </div>
@@ -100,8 +117,8 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
 
         {/* Status Badge */}
         <div className="flex justify-end">
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={`text-xs ${getStatusColor(piggyBank.status)}`}
           >
             {piggyBank.status}
@@ -111,4 +128,3 @@ export function PiggyBankCard({ piggyBank, membership, onClick }: PiggyBankCardP
     </Card>
   );
 }
-

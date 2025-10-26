@@ -10,13 +10,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { PiggyBank as PiggyBankIcon, Users, Target, Calendar } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  PiggyBank as PiggyBankIcon,
+  Users,
+  Target,
+  Calendar,
+} from "lucide-react";
 
 const createPiggyBankSchema = z.object({
-  name: z.string().min(1, "Name is required").max(50, "Name must be less than 50 characters"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(50, "Name must be less than 50 characters"),
   goalAmount: z.string().min(0.0001, "Goal amount must be greater than 0"),
-  partnerAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address"),
+  partnerAddress: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address"),
   goalDeadline: z.string().optional(),
 });
 
@@ -27,7 +44,10 @@ interface PiggyBankCreateFormProps {
   isLoading?: boolean;
 }
 
-export function PiggyBankCreateForm({ onSubmit, isLoading = false }: PiggyBankCreateFormProps) {
+export function PiggyBankCreateForm({
+  onSubmit,
+  isLoading = false,
+}: PiggyBankCreateFormProps) {
   const form = useForm<CreatePiggyBankForm>({
     resolver: zodResolver(createPiggyBankSchema),
     defaultValues: {
@@ -64,7 +84,10 @@ export function PiggyBankCreateForm({ onSubmit, isLoading = false }: PiggyBankCr
 
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -117,10 +140,7 @@ export function PiggyBankCreateForm({ onSubmit, isLoading = false }: PiggyBankCr
                     Partner Wallet Address
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="0x..."
-                      {...field}
-                    />
+                    <Input placeholder="0x..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,21 +157,14 @@ export function PiggyBankCreateForm({ onSubmit, isLoading = false }: PiggyBankCr
                     Goal Deadline (Optional)
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                    />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating..." : "Create Piggy Bank"}
             </Button>
           </form>
@@ -160,4 +173,3 @@ export function PiggyBankCreateForm({ onSubmit, isLoading = false }: PiggyBankCr
     </Card>
   );
 }
-

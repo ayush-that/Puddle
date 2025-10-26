@@ -32,10 +32,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button
-                onClick={login}
-                variant="default"
-              >
+              <Button onClick={login} variant="default">
                 Get Started
               </Button>
             </div>
@@ -52,16 +49,12 @@ export default function Home() {
               Save Together, Achieve Together
             </h1>
             <p className="text-xl mb-8 text-muted-foreground max-w-2xl mx-auto">
-              Create shared savings goals with your partner on the blockchain. 
+              Create shared savings goals with your partner on the blockchain.
               Secure, transparent, and collaborative.
             </p>
           </div>
 
-          <Button
-            onClick={login}
-            size="lg"
-            className="px-8 py-4 text-lg"
-          >
+          <Button onClick={login} size="lg" className="px-8 py-4 text-lg">
             Start Saving Together
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -71,7 +64,9 @@ export default function Home() {
             <Card className="bg-card border-border">
               <CardContent className="p-6 text-center">
                 <Shield className="h-12 w-12 mx-auto mb-4 text-foreground" />
-                <h3 className="font-bold text-xl mb-2 text-foreground">Secure</h3>
+                <h3 className="font-bold text-xl mb-2 text-foreground">
+                  Secure
+                </h3>
                 <p className="text-muted-foreground">
                   Your funds are secured by smart contracts on Ethereum
                 </p>

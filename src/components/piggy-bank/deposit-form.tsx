@@ -7,7 +7,14 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { ArrowDown, Wallet } from "lucide-react";
 
 const depositSchema = z.object({
@@ -24,12 +31,12 @@ interface DepositFormProps {
   isDepositing?: boolean;
 }
 
-export function DepositForm({ 
-  contractAddress, 
-  piggyBankId, 
-  onSuccess, 
-  onDeposit, 
-  isDepositing = false 
+export function DepositForm({
+  contractAddress,
+  piggyBankId,
+  onSuccess,
+  onDeposit,
+  isDepositing = false,
 }: DepositFormProps) {
   const form = useForm<DepositForm>({
     resolver: zodResolver(depositSchema),
@@ -59,7 +66,10 @@ export function DepositForm({
 
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="amount"
@@ -82,11 +92,7 @@ export function DepositForm({
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isDepositing}
-            >
+            <Button type="submit" className="w-full" disabled={isDepositing}>
               {isDepositing ? "Depositing..." : "Deposit"}
             </Button>
           </form>
@@ -95,4 +101,3 @@ export function DepositForm({
     </Card>
   );
 }
-

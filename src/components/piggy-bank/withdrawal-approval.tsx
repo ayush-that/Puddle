@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, XCircle, Clock, Users, AlertTriangle } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Users,
+  AlertTriangle,
+} from "lucide-react";
 import { formatDistance } from "date-fns";
 
 interface WithdrawalApproval {
@@ -27,12 +33,12 @@ interface WithdrawalApprovalProps {
   isRejecting?: boolean;
 }
 
-export function WithdrawalApproval({ 
-  withdrawal, 
-  onApprove, 
-  onReject, 
+export function WithdrawalApproval({
+  withdrawal,
+  onApprove,
+  onReject,
   isApproving = false,
-  isRejecting = false 
+  isRejecting = false,
 }: WithdrawalApprovalProps) {
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -73,7 +79,8 @@ export function WithdrawalApproval({
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            A withdrawal has been requested. Both partners must approve before funds can be withdrawn.
+            A withdrawal has been requested. Both partners must approve before
+            funds can be withdrawn.
           </AlertDescription>
         </Alert>
 
@@ -107,8 +114,8 @@ export function WithdrawalApproval({
             <span className="text-sm text-gray-600">Status</span>
             <div className="flex items-center gap-2">
               {getStatusIcon()}
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className={`text-xs ${getStatusColor()}`}
               >
                 {getStatusText()}
@@ -158,4 +165,3 @@ export function WithdrawalApproval({
     </Card>
   );
 }
-

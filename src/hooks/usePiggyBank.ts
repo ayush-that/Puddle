@@ -8,84 +8,82 @@ import { sepolia } from "viem/chains";
 // Mock contract ABI - replace with actual ABI
 const PIGGY_BANK_ABI = [
   {
-    "inputs": [
-      {"internalType": "address", "name": "partner1", "type": "address"},
-      {"internalType": "address", "name": "partner2", "type": "address"},
-      {"internalType": "uint256", "name": "goalAmount", "type": "uint256"},
-      {"internalType": "uint256", "name": "goalDeadline", "type": "uint256"}
+    inputs: [
+      { internalType: "address", name: "partner1", type: "address" },
+      { internalType: "address", name: "partner2", type: "address" },
+      { internalType: "uint256", name: "goalAmount", type: "uint256" },
+      { internalType: "uint256", name: "goalDeadline", type: "uint256" },
     ],
-    "name": "createPiggyBank",
-    "outputs": [{"internalType": "address", "name": "", "type": "address"}],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "createPiggyBank",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    inputs: [],
+    name: "deposit",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
   },
   {
-    "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
-    "name": "requestWithdrawal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+    name: "requestWithdrawal",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "approveWithdrawal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "approveWithdrawal",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getBalance",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
+    inputs: [],
+    name: "getBalance",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getGoalProgress",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  }
+    inputs: [],
+    name: "getGoalProgress",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
+
+// Shared functions for wallet and public clients
+const getWalletClient = async (user: any) => {
+  if (!user?.wallet) {
+    throw new Error("No wallet connected");
+  }
+
+  const provider = await user.wallet.getEthereumProvider();
+
+  return createWalletClient({
+    account: user.wallet.address as `0x${string}`,
+    chain: sepolia,
+    transport: custom(provider),
+  });
+};
+
+const getPublicClient = () => {
+  return createPublicClient({
+    chain: sepolia,
+    transport: http(
+      process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL || "https://rpc.sepolia.org",
+    ),
+  });
+};
 
 export function usePiggyBank(contractAddress?: `0x${string}`) {
   const { user } = usePrivy();
   const [piggyBankData, setPiggyBankData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  const getWalletClient = async () => {
-    if (!user?.wallet) {
-      throw new Error("No wallet connected");
-    }
-
-    const provider = await user.wallet.getEthersProvider();
-    const signer = provider.getSigner();
-
-    return createWalletClient({
-      account: user.wallet.address as `0x${string}`,
-      chain: sepolia,
-      transport: custom({
-        async request({ method, params }) {
-          return await signer.provider.send(method, params || []);
-        },
-      }),
-    });
-  };
-
-  const getPublicClient = () => {
-    return createPublicClient({
-      chain: sepolia,
-      transport: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL || "https://rpc.sepolia.org"),
-    });
-  };
 
   useEffect(() => {
     if (!contractAddress) return;
@@ -128,7 +126,7 @@ export function usePiggyBank(contractAddress?: `0x${string}`) {
   return {
     piggyBankData,
     loading,
-    getWalletClient,
+    getWalletClient: () => getWalletClient(user),
     getPublicClient,
   };
 }
@@ -149,11 +147,12 @@ export function useCreatePiggyBank() {
     setIsCreating(true);
 
     try {
-      const walletClient = await getWalletClient();
+      const walletClient = await getWalletClient(user);
       const publicClient = getPublicClient();
 
       // Mock factory address - replace with actual
-      const factoryAddress = "0x1234567890123456789012345678901234567890" as `0x${string}`;
+      const factoryAddress =
+        "0x1234567890123456789012345678901234567890" as `0x${string}`;
 
       const { request } = await publicClient.simulateContract({
         address: factoryAddress,
@@ -206,7 +205,7 @@ export function useDeposit(contractAddress: `0x${string}`) {
     setIsDepositing(true);
 
     try {
-      const walletClient = await getWalletClient();
+      const walletClient = await getWalletClient(user);
       const publicClient = getPublicClient();
 
       const { request } = await publicClient.simulateContract({
@@ -248,7 +247,7 @@ export function useWithdrawal(contractAddress: `0x${string}`) {
     setIsRequesting(true);
 
     try {
-      const walletClient = await getWalletClient();
+      const walletClient = await getWalletClient(user);
       const publicClient = getPublicClient();
 
       const { request } = await publicClient.simulateContract({
@@ -279,7 +278,7 @@ export function useWithdrawal(contractAddress: `0x${string}`) {
     setIsApproving(true);
 
     try {
-      const walletClient = await getWalletClient();
+      const walletClient = await getWalletClient(user);
       const publicClient = getPublicClient();
 
       const { request } = await publicClient.simulateContract({
@@ -308,4 +307,3 @@ export function useWithdrawal(contractAddress: `0x${string}`) {
     isApproving,
   };
 }
-

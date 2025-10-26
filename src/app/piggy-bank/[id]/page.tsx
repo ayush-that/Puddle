@@ -13,7 +13,12 @@ import { WithdrawalRequest } from "@/components/piggy-bank/withdrawal-request";
 import { WithdrawalApproval } from "@/components/piggy-bank/withdrawal-approval";
 import { TransactionHistory } from "@/components/piggy-bank/transaction-history";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ArrowLeft, PiggyBank as PiggyBankIcon, Users, Target } from "lucide-react";
+import {
+  ArrowLeft,
+  PiggyBank as PiggyBankIcon,
+  Users,
+  Target,
+} from "lucide-react";
 
 interface PiggyBankData {
   id: string;
@@ -81,7 +86,7 @@ export default function PiggyBankPage() {
         // TODO: Replace with actual API call
         // const data = await apiClient.getPiggyBank(piggyBankId, token);
         // setPiggyBank(data);
-        
+
         // Mock data for now
         setPiggyBank({
           id: piggyBankId,
@@ -96,17 +101,17 @@ export default function PiggyBankPage() {
             {
               role: "creator",
               user: {
-                walletAddress: "0x1234567890123456789012345678901234567890"
-              }
+                walletAddress: "0x1234567890123456789012345678901234567890",
+              },
             },
             {
               role: "partner",
               user: {
-                walletAddress: "0x0987654321098765432109876543210987654321"
-              }
-            }
+                walletAddress: "0x0987654321098765432109876543210987654321",
+              },
+            },
           ],
-          transactions: []
+          transactions: [],
         });
       } catch (error) {
         console.error("Failed to load piggy bank:", error);
@@ -123,7 +128,7 @@ export default function PiggyBankPage() {
     try {
       // TODO: Implement actual deposit
       console.log("Depositing", amount, "to piggy bank", piggyBankId);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error("Deposit failed:", error);
     } finally {
@@ -131,12 +136,20 @@ export default function PiggyBankPage() {
     }
   };
 
-  const handleRequestWithdrawal = async (amount: string, piggyBankId: string) => {
+  const handleRequestWithdrawal = async (
+    amount: string,
+    piggyBankId: string,
+  ) => {
     setIsRequestingWithdrawal(true);
     try {
       // TODO: Implement actual withdrawal request
-      console.log("Requesting withdrawal of", amount, "from piggy bank", piggyBankId);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log(
+        "Requesting withdrawal of",
+        amount,
+        "from piggy bank",
+        piggyBankId,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error("Withdrawal request failed:", error);
     } finally {
@@ -149,7 +162,7 @@ export default function PiggyBankPage() {
     try {
       // TODO: Implement actual withdrawal approval
       console.log("Approving withdrawal", withdrawalId);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error("Withdrawal approval failed:", error);
     } finally {
@@ -161,7 +174,7 @@ export default function PiggyBankPage() {
     try {
       // TODO: Implement actual withdrawal rejection
       console.log("Rejecting withdrawal", withdrawalId);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
       console.error("Withdrawal rejection failed:", error);
     }
@@ -234,7 +247,7 @@ export default function PiggyBankPage() {
                 <TabsTrigger value="deposit">Deposit</TabsTrigger>
                 <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="deposit">
                 <DepositForm
                   contractAddress={piggyBank.contractAddress as `0x${string}`}
@@ -243,7 +256,7 @@ export default function PiggyBankPage() {
                   isDepositing={isDepositing}
                 />
               </TabsContent>
-              
+
               <TabsContent value="withdraw">
                 <WithdrawalRequest
                   contractAddress={piggyBank.contractAddress as `0x${string}`}
@@ -278,13 +291,17 @@ export default function PiggyBankPage() {
               <CardContent>
                 <div className="space-y-3">
                   {piggyBank.members.map((member, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div>
                         <p className="font-medium text-gray-900 capitalize">
                           {member.role}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {member.user.walletAddress.slice(0, 6)}...{member.user.walletAddress.slice(-4)}
+                          {member.user.walletAddress.slice(0, 6)}...
+                          {member.user.walletAddress.slice(-4)}
                         </p>
                       </div>
                     </div>

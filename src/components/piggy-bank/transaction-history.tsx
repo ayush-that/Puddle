@@ -61,8 +61,8 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   };
 
   const getTypeColor = (type: string) => {
-    return type === "deposit" 
-      ? "bg-green-100 text-green-600" 
+    return type === "deposit"
+      ? "bg-green-100 text-green-600"
       : "bg-red-100 text-red-600";
   };
 
@@ -112,8 +112,8 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     {getStatusIcon(tx.status)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={`text-xs ${getStatusColor(tx.status)}`}
                     >
                       {tx.status}
@@ -133,4 +133,3 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
     </Card>
   );
 }
-

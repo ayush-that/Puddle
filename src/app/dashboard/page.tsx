@@ -228,7 +228,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-            
+
               <Button
                 onClick={() => router.push("/piggy-bank/create")}
                 variant="default"

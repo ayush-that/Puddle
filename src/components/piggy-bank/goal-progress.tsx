@@ -11,14 +11,20 @@ interface GoalProgressProps {
   goalDeadline?: string | null;
 }
 
-export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalProgressProps) {
+export function GoalProgress({
+  currentAmount,
+  goalAmount,
+  goalDeadline,
+}: GoalProgressProps) {
   const current = parseFloat(currentAmount);
   const goal = parseFloat(goalAmount);
   const progress = (current / goal) * 100;
   const remaining = goal - current;
 
   const daysLeft = goalDeadline
-    ? Math.ceil((new Date(goalDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    ? Math.ceil(
+        (new Date(goalDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+      )
     : null;
 
   const getProgressColor = (progress: number) => {
@@ -29,10 +35,10 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
   };
 
   const getProgressVariant = (progress: number) => {
-    if (progress >= 100) return "default";
+    if (progress >= 100) return "success";
     if (progress >= 75) return "default";
-    if (progress >= 50) return "default";
-    return "secondary";
+    if (progress >= 50) return "warning";
+    return "outline";
   };
 
   return (
@@ -48,7 +54,10 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
         {/* Progress Circle */}
         <div className="flex items-center justify-center">
           <div className="relative w-32 h-32">
-            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+            <svg
+              className="w-32 h-32 transform -rotate-90"
+              viewBox="0 0 100 100"
+            >
               <circle
                 cx="50"
                 cy="50"
@@ -72,7 +81,9 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`text-2xl font-bold ${getProgressColor(progress)}`}>
+              <span
+                className={`text-2xl font-bold ${getProgressColor(progress)}`}
+              >
                 {progress.toFixed(0)}%
               </span>
               <span className="text-xs text-gray-500">Complete</span>
@@ -128,10 +139,15 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
             <span className="text-sm text-gray-600">
               {daysLeft > 0 ? (
                 <>
-                  <span className="font-semibold text-gray-900">{daysLeft}</span> days remaining
+                  <span className="font-semibold text-gray-900">
+                    {daysLeft}
+                  </span>{" "}
+                  days remaining
                 </>
               ) : (
-                <span className="font-semibold text-red-600">Deadline passed</span>
+                <span className="font-semibold text-red-600">
+                  Deadline passed
+                </span>
               )}
             </span>
           </div>
@@ -139,10 +155,7 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
 
         {/* Status Badge */}
         <div className="flex justify-center">
-          <Badge 
-            variant={getProgressVariant(progress)}
-            className="text-sm"
-          >
+          <Badge variant={getProgressVariant(progress)} className="text-sm">
             {progress >= 100 ? "Goal Reached!" : "In Progress"}
           </Badge>
         </div>
@@ -150,4 +163,3 @@ export function GoalProgress({ currentAmount, goalAmount, goalDeadline }: GoalPr
     </Card>
   );
 }
-

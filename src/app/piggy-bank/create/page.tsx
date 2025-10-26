@@ -31,18 +31,18 @@ export default function CreatePiggyBank() {
 
   const handleCreatePiggyBank = async (data: any) => {
     setIsCreating(true);
-    
+
     try {
       // TODO: Implement actual piggy bank creation
       // 1. Deploy smart contract
       // 2. Save to database
       // 3. Redirect to piggy bank page
-      
+
       console.log("Creating piggy bank with data:", data);
-      
+
       // Mock delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Redirect to dashboard for now
       router.push("/dashboard");
     } catch (error) {
@@ -79,7 +79,7 @@ export default function CreatePiggyBank() {
 
       {/* Content */}
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <PiggyBankCreateForm 
+        <PiggyBankCreateForm
           onSubmit={handleCreatePiggyBank}
           isLoading={isCreating}
         />
@@ -87,4 +87,3 @@ export default function CreatePiggyBank() {
     </div>
   );
 }
-

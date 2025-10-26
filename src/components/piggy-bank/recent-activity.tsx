@@ -2,7 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpCircle, ArrowDownCircle, Clock, CheckCircle } from "lucide-react";
+import {
+  ArrowUpCircle,
+  ArrowDownCircle,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 
 interface ActivityItem {
   id: string;
@@ -26,7 +31,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "Vacation Fund 2025",
       amount: "0.5",
       timestamp: "2025-01-28T14:30:00Z",
-      status: "completed"
+      status: "completed",
     },
     {
       id: "2",
@@ -34,7 +39,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "New Laptop Fund",
       amount: "1.5",
       timestamp: "2025-01-27T10:15:00Z",
-      status: "completed"
+      status: "completed",
     },
     {
       id: "3",
@@ -42,7 +47,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "Emergency Savings",
       amount: "1.2",
       timestamp: "2025-01-26T16:45:00Z",
-      status: "completed"
+      status: "completed",
     },
     {
       id: "4",
@@ -50,7 +55,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "Gaming Setup",
       amount: "3.0",
       timestamp: "2025-01-25T11:30:00Z",
-      status: "completed"
+      status: "completed",
     },
     {
       id: "5",
@@ -58,7 +63,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "Wedding Expenses",
       amount: "0.8",
       timestamp: "2025-01-24T09:20:00Z",
-      status: "pending"
+      status: "pending",
     },
     {
       id: "6",
@@ -66,15 +71,15 @@ export function RecentActivity({ className }: RecentActivityProps) {
       piggyBankName: "Cancelled Project",
       amount: "0.8",
       timestamp: "2025-01-23T13:10:00Z",
-      status: "completed"
-    }
+      status: "completed",
+    },
   ];
 
   const getActivityIcon = (type: string, status: string) => {
     if (status === "pending") {
       return <Clock className="h-4 w-4 text-yellow-500" />;
     }
-    
+
     switch (type) {
       case "deposit":
         return <ArrowUpCircle className="h-4 w-4 text-green-500" />;
@@ -120,8 +125,10 @@ export function RecentActivity({ className }: RecentActivityProps) {
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+    );
+
     if (diffInHours < 1) {
       return "Just now";
     } else if (diffInHours < 24) {
@@ -168,7 +175,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
             </div>
           ))}
         </div>
-        
+
         {activities.length === 0 && (
           <div className="text-center py-6">
             <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />

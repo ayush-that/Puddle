@@ -1,7 +1,12 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PiggyBank as PiggyBankIcon, TrendingUp, Target, DollarSign } from "lucide-react";
+import {
+  PiggyBank as PiggyBankIcon,
+  TrendingUp,
+  Target,
+  DollarSign,
+} from "lucide-react";
 import { PiggyBank } from "@/db/schema";
 
 interface PiggyBankWithMembership {
@@ -17,16 +22,30 @@ interface DashboardStatsProps {
 
 export function DashboardStats({ piggyBanks }: DashboardStatsProps) {
   // Calculate statistics
-  const totalSaved = piggyBanks.reduce((sum, pb) => sum + parseFloat(pb.piggyBank.currentAmount), 0);
-  const totalGoal = piggyBanks.reduce((sum, pb) => sum + parseFloat(pb.piggyBank.goalAmount), 0);
-  const activeBanks = piggyBanks.filter(pb => pb.piggyBank.status === "active").length;
-  const completedBanks = piggyBanks.filter(pb => pb.piggyBank.status === "completed").length;
-  const averageProgress = piggyBanks.length > 0 
-    ? piggyBanks.reduce((sum, pb) => {
-        const progress = (parseFloat(pb.piggyBank.currentAmount) / parseFloat(pb.piggyBank.goalAmount)) * 100;
-        return sum + progress;
-      }, 0) / piggyBanks.length 
-    : 0;
+  const totalSaved = piggyBanks.reduce(
+    (sum, pb) => sum + parseFloat(pb.piggyBank.currentAmount),
+    0,
+  );
+  const totalGoal = piggyBanks.reduce(
+    (sum, pb) => sum + parseFloat(pb.piggyBank.goalAmount),
+    0,
+  );
+  const activeBanks = piggyBanks.filter(
+    (pb) => pb.piggyBank.status === "active",
+  ).length;
+  const completedBanks = piggyBanks.filter(
+    (pb) => pb.piggyBank.status === "completed",
+  ).length;
+  const averageProgress =
+    piggyBanks.length > 0
+      ? piggyBanks.reduce((sum, pb) => {
+          const progress =
+            (parseFloat(pb.piggyBank.currentAmount) /
+              parseFloat(pb.piggyBank.goalAmount)) *
+            100;
+          return sum + progress;
+        }, 0) / piggyBanks.length
+      : 0;
 
   const stats = [
     {
@@ -34,29 +53,29 @@ export function DashboardStats({ piggyBanks }: DashboardStatsProps) {
       value: `${totalSaved.toFixed(2)} ETH`,
       icon: DollarSign,
       description: "Across all piggy banks",
-      color: "text-green-600 dark:text-green-400"
+      color: "text-green-600 dark:text-green-400",
     },
     {
       title: "Active Banks",
       value: activeBanks.toString(),
       icon: PiggyBankIcon,
       description: "Currently saving",
-      color: "text-blue-600 dark:text-blue-400"
+      color: "text-blue-600 dark:text-blue-400",
     },
     {
       title: "Completed",
       value: completedBanks.toString(),
       icon: Target,
       description: "Goals achieved",
-      color: "text-purple-600 dark:text-purple-400"
+      color: "text-purple-600 dark:text-purple-400",
     },
     {
       title: "Avg Progress",
       value: `${averageProgress.toFixed(1)}%`,
       icon: TrendingUp,
       description: "Overall progress",
-      color: "text-orange-600 dark:text-orange-400"
-    }
+      color: "text-orange-600 dark:text-orange-400",
+    },
   ];
 
   return (
@@ -64,7 +83,10 @@ export function DashboardStats({ piggyBanks }: DashboardStatsProps) {
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Card key={index} className="hover:shadow-md transition-shadow duration-200">
+          <Card
+            key={index}
+            className="hover:shadow-md transition-shadow duration-200"
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
