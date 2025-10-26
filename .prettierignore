@@ -1,3 +1,16 @@
-# Ignore artifacts:
-build
-coverage
+# Ignore problematic ABI files that contain table-formatted data
+src/contracts/PiggyBankABI.json
+src/contracts/PiggyBankFactoryABI.json
+
+# Ignore Foundry output and cache directories
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore build outputs
+.next/
+dist/
+build/

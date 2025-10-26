@@ -92,6 +92,9 @@ importers:
       prettier:
         specifier: 3.6.2
         version: 3.6.2
+      prettier-plugin-solidity:
+        specifier: ^2.1.0
+        version: 2.1.0(prettier@3.6.2)
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
@@ -127,6 +130,12 @@ packages:
     resolution:
       {
         integrity: sha512-IfVJPrDPhHfqXRDb89472hXkpvJuQQR7FDI9isLPHEqSYt/45whIoBxSPgZ0ssTt379VhQo4+87PWI1DoLSfAQ==,
+      }
+
+  "@bytecodealliance/preview2-shim@0.17.2":
+    resolution:
+      {
+        integrity: sha512-mNm/lblgES8UkVle8rGImXOz4TtL3eU3inHay/7TVchkKrb/lgcVvTK0+VAw8p5zQ0rgQsXm1j5dOlAAd+MeoA==,
       }
 
   "@coinbase/wallet-sdk@4.3.2":
@@ -1302,6 +1311,12 @@ packages:
       }
     engines: { node: ^14.21.3 || >=16 }
 
+  "@nomicfoundation/slang@1.2.0":
+    resolution:
+      {
+        integrity: sha512-+04Z1RHbbz0ldDbHKQFOzveCdI9Rd3TZZu7fno5hHy3OsqTo9UK5Jgqo68wMvRovCO99POv6oCEyO7+urGeN8Q==,
+      }
+
   "@phosphor-icons/webcomponents@2.1.5":
     resolution:
       {
@@ -2143,6 +2158,12 @@ packages:
     resolution:
       {
         integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==,
+      }
+
+  "@solidity-parser/parser@0.20.2":
+    resolution:
+      {
+        integrity: sha512-rbu0bzwNvMcwAjH86hiEAcOeRI2EeK8zCkHDrFykh/Al8mvJeFmjy3UrE7GYQjNwOgbGUUtCn5/k8CB8zIu7QA==,
       }
 
   "@swc/helpers@0.5.15":
@@ -4169,6 +4190,15 @@ packages:
         integrity: sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg==,
       }
 
+  prettier-plugin-solidity@2.1.0:
+    resolution:
+      {
+        integrity: sha512-O5HX4/PCE5aqiaEiNGbSRLbSBZQ6kLswAav5LBSewwzhT+sZlN6iAaLZlZcJzPEnIAxwLEHP03xKEg92fflT9Q==,
+      }
+    engines: { node: ">=20" }
+    peerDependencies:
+      prettier: ">=3.0.0"
+
   prettier@3.6.2:
     resolution:
       {
@@ -5105,6 +5135,8 @@ snapshots:
       - utf-8-validate
       - zod
 
+  "@bytecodealliance/preview2-shim@0.17.2": {}
+
   "@coinbase/wallet-sdk@4.3.2":
     dependencies:
       "@noble/hashes": 1.8.0
@@ -5757,6 +5789,10 @@ snapshots:
   "@noble/hashes@1.7.1": {}
 
   "@noble/hashes@1.8.0": {}
+
+  "@nomicfoundation/slang@1.2.0":
+    dependencies:
+      "@bytecodealliance/preview2-shim": 0.17.2
 
   "@phosphor-icons/webcomponents@2.1.5":
     dependencies:
@@ -7070,6 +7106,8 @@ snapshots:
       - encoding
       - typescript
       - utf-8-validate
+
+  "@solidity-parser/parser@0.20.2": {}
 
   "@swc/helpers@0.5.15":
     dependencies:
@@ -8816,6 +8854,13 @@ snapshots:
   preact@10.24.2: {}
 
   preact@10.27.2: {}
+
+  prettier-plugin-solidity@2.1.0(prettier@3.6.2):
+    dependencies:
+      "@nomicfoundation/slang": 1.2.0
+      "@solidity-parser/parser": 0.20.2
+      prettier: 3.6.2
+      semver: 7.7.3
 
   prettier@3.6.2: {}
 
