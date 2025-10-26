@@ -8,13 +8,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "Arial", "Helvetica", "sans-serif"],
-        "abc-favorit": [
-          "var(--font-abc-favorit)",
-          "Arial",
-          "Helvetica",
-          "sans-serif",
-        ],
+        sans: ["Poppins", "sans-serif"],
+      },
+      padding: {
+        safe: "env(safe-area-inset-top)",
+        "safe-bottom": "env(safe-area-inset-bottom)",
       },
     },
   },

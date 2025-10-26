@@ -16,19 +16,10 @@ import {
 import { PiggyBankCard } from "@/components/piggy-bank/piggy-bank-card";
 import { PiggyBank } from "@/db/schema";
 import { DashboardStats } from "@/components/piggy-bank/dashboard-stats";
-import { RecentActivity } from "@/components/piggy-bank/recent-activity";
-import { QuickActions } from "@/components/piggy-bank/quick-actions";
 import { SkeletonCard, SkeletonStats } from "@/components/ui/skeleton-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import {
-  PiggyBank as PiggyBankIcon,
-  Plus,
-  Bell,
-  Search,
-  Filter,
-  X,
-} from "lucide-react";
+import { Plus, Search, Filter, X } from "lucide-react";
 
 interface PiggyBankWithMembership {
   piggyBank: PiggyBank;
@@ -129,19 +120,6 @@ export default function Dashboard() {
             },
             membership: { role: "creator" },
           },
-          {
-            piggyBank: {
-              id: "6",
-              name: "Cancelled Project",
-              goalAmount: "2.0",
-              currentAmount: "0.8",
-              status: "cancelled",
-              goalDeadline: new Date("2025-04-10T23:59:59Z"),
-              contractAddress: "0x6789012345f1234567890abcdef1234567890",
-              createdAt: new Date("2025-01-12T13:20:00Z"),
-            },
-            membership: { role: "partner" },
-          },
         ];
         setPiggyBanks(mockPiggyBanks);
       } catch (error) {
@@ -215,34 +193,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-card border-b border-border pt-safe">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <PiggyBankIcon className="h-8 w-8 text-foreground" />
-              <h1 className="text-xl font-bold text-foreground">
-                Onchain Piggy Bank
-              </h1>
+              <h1 className="text-2xl font-bold text-foreground">Puddle</h1>
             </div>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-
-              <Button
-                onClick={() => router.push("/piggy-bank/create")}
-                variant="default"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create New
-              </Button>
-            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="px-4 py-6">
         {/* Stats Section */}
         {loading ? (
           <SkeletonStats />
@@ -251,34 +216,34 @@ export default function Dashboard() {
         )}
 
         {/* Search and Filter Controls */}
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search Input */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search piggy banks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
+        <div className="mb-6 space-y-3">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search piggy banks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
 
+          <div className="flex gap-2">
             {/* Status Filter */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="flex-1">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
@@ -290,83 +255,67 @@ export default function Dashboard() {
 
             {/* Sort Options */}
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Sort by" />
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Sort" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="name">Name</SelectItem>
                 <SelectItem value="amount">Amount</SelectItem>
                 <SelectItem value="progress">Progress</SelectItem>
-                <SelectItem value="date">Date Created</SelectItem>
+                <SelectItem value="date">Date</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Piggy Banks Section */}
-          <div className="lg:col-span-3">
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <SkeletonCard key={index} />
-                ))}
-              </div>
-            ) : filteredAndSortedPiggyBanks.length === 0 ? (
-              <div className="text-center py-12">
-                <Card className="max-w-md mx-auto">
-                  <CardHeader className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <div className="p-4 bg-muted rounded-full">
-                        <PiggyBankIcon className="h-12 w-12 text-muted-foreground" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-xl font-semibold text-foreground">
-                      {piggyBanks.length === 0
-                        ? "No Piggy Banks Yet"
-                        : "No Results Found"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-muted-foreground mb-6">
-                      {piggyBanks.length === 0
-                        ? "Create your first piggy bank and start saving with a partner!"
-                        : "Try adjusting your search or filter criteria."}
-                    </p>
-                    <Button
-                      onClick={() => router.push("/piggy-bank/create")}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      {piggyBanks.length === 0
-                        ? "Create Your First Piggy Bank"
-                        : "Create New Piggy Bank"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredAndSortedPiggyBanks.map((pb) => (
-                  <PiggyBankCard
-                    key={pb.piggyBank.id}
-                    piggyBank={pb.piggyBank}
-                    membership={pb.membership}
-                    onClick={() =>
-                      router.push(`/piggy-bank/${pb.piggyBank.id}`)
-                    }
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <QuickActions />
-            <RecentActivity />
-          </div>
+        {/* Piggy Banks Section */}
+        <div>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-4">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))}
+            </div>
+          ) : filteredAndSortedPiggyBanks.length === 0 ? (
+            <div className="text-center py-12">
+              <Card className="max-w-md mx-auto">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-xl font-semibold text-foreground">
+                    {piggyBanks.length === 0
+                      ? "No Piggy Banks Yet"
+                      : "No Results Found"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p className="text-muted-foreground mb-6">
+                    {piggyBanks.length === 0
+                      ? "Create your first piggy bank and start saving with a partner!"
+                      : "Try adjusting your search or filter criteria."}
+                  </p>
+                  <Button
+                    onClick={() => router.push("/piggy-bank/create")}
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {piggyBanks.length === 0
+                      ? "Create Your First Piggy Bank"
+                      : "Create New Piggy Bank"}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {filteredAndSortedPiggyBanks.map((pb) => (
+                <PiggyBankCard
+                  key={pb.piggyBank.id}
+                  piggyBank={pb.piggyBank}
+                  membership={pb.membership}
+                  onClick={() => router.push(`/piggy-bank/${pb.piggyBank.id}`)}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>

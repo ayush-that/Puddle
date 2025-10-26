@@ -26,9 +26,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <PiggyBank className="h-8 w-8 text-foreground" />
-              <h1 className="text-xl font-bold text-foreground">
-                Onchain Piggy Bank
-              </h1>
+              <h1 className="text-xl font-bold text-foreground">Puddle</h1>
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />

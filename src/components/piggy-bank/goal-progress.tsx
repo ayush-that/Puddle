@@ -155,7 +155,7 @@ export function GoalProgress({
 
         {/* Status Badge */}
         <div className="flex justify-center">
-          <Badge variant={getProgressVariant(progress)} className="text-sm">
+          <Badge variant={getProgressVariant(progress)}>
             {progress >= 100 ? "Goal Reached!" : "In Progress"}
           </Badge>
         </div>

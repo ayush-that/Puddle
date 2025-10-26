@@ -29,19 +29,6 @@ export function PiggyBankCard({
       )
     : null;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "completed":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
-      case "cancelled":
-        return "bg-muted text-muted-foreground";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
-
   return (
     <Card
       className="cursor-pointer hover:shadow-lg transition-all duration-200"
@@ -55,9 +42,20 @@ export function PiggyBankCard({
               {piggyBank.name}
             </CardTitle>
           </div>
-          <Badge variant="outline" className="text-xs">
-            {membership.role}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{membership.role}</Badge>
+            <Badge
+              variant={
+                piggyBank.status === "active"
+                  ? "success"
+                  : piggyBank.status === "completed"
+                    ? "default"
+                    : "outline"
+              }
+            >
+              {piggyBank.status}
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Target className="h-4 w-4" />
@@ -114,16 +112,6 @@ export function PiggyBankCard({
             </span>
           </div>
         )}
-
-        {/* Status Badge */}
-        <div className="flex justify-end">
-          <Badge
-            variant="outline"
-            className={`text-xs ${getStatusColor(piggyBank.status)}`}
-          >
-            {piggyBank.status}
-          </Badge>
-        </div>
       </CardContent>
     </Card>
   );
