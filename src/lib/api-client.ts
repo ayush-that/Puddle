@@ -3,12 +3,6 @@ interface RequestOptions extends RequestInit {
 }
 
 class APIClient {
-  private baseURL: string;
-
-  constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  }
-
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { authToken, ...fetchOptions } = options;
 
@@ -21,7 +15,7 @@ class APIClient {
       headers["Authorization"] = `Bearer ${authToken}`;
     }
 
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
+    const response = await fetch(endpoint, {
       ...fetchOptions,
       headers,
     });
