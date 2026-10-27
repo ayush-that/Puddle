@@ -54,7 +54,7 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "viem": "^2.38.0",
-    "zod": "^4.1.12"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",
